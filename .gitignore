@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+data/fifa/*
+data/data_fifa/*
+data/flatfile_fifa_players/*
 # C extensions
 *.so
 

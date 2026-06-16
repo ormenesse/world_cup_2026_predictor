@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>partidas_features</title>
+  <style>
+    :root {
+      --bg: #353535ff;
+      --text: #500b3aff;
+      --panel: #f7f7f7;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,.35);
+      --accent: #d54e62ff;
+      --rule: #1f2937;
+      --muted: #94a3b8;
+      --cell: #555555;
+      --link: #60a5fa;
+      --btn: #d54e62ff;
+      --btn-text: #fff;
+      --btn-hover: #b8122d;
+      --code-bg: #353535ff;
+      --code-border: #353535ff;
+      --code-inset: rgba(255,255,255,.03);
+      --fade-top: rgba(11,16,33,0);
+      --fade-mid: rgba(11,16,33,.9);
+      --fade-bottom: rgba(11,16,33,1);
+      --mermaid-text: #111111;
+      --mermaid-line: #888888;
+      --mermaid-tertiary: #aaaaaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -70px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--mermaid-tertiary) 0%, transparent 70%);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--accent);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 2px;
+    }
+
+    .info-table,
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td,
+    .schema-table th,
+    .schema-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td,
+    .schema-table tr:last-child td { border-bottom: none; }
+
+    .info-table th {
+      color: var(--accent);
+      white-space: nowrap;
+      width: 200px;
+      font-weight: 700;
+    }
+
+    .info-table td,
+    .schema-table td { color: var(--cell); }
+
+    .schema-table thead th {
+      color: var(--accent);
+      background: var(--panel);
+      font-weight: 700;
+    }
+
+    .code-wrap { position: relative; }
+
+    .code-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .code-toolbar .btn {
+      appearance: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .code-toolbar .btn:hover { background: var(--btn-hover); }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height .25s ease;
+      box-shadow: inset 0 1px 0 var(--code-inset);
+    }
+
+    .code-box.collapsed { max-height: 180px; }
+
+    .code-box.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      background: linear-gradient(180deg, var(--fade-top) 0%, var(--fade-mid) 90%, var(--fade-bottom) 100%);
+      pointer-events: none;
+    }
+
+    pre { margin: 0; }
+
+    pre code.hljs {
+      background: var(--code-bg) !important;
+      white-space: pre-wrap !important;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .diagram-shell {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      overflow: auto;
+    }
+
+    .mermaid { min-width: 720px; }
+
+    .mermaid svg path,
+    .mermaid svg line,
+    .mermaid svg rect,
+    .mermaid svg polygon,
+    .mermaid svg text { fill: var(--mermaid-text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .footnote {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .panel { padding: 14px; }
+      .info-table th { width: 160px; }
+      .mermaid { min-width: 620px; }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="title-row">
+        <h1>partidas_features</h1>
+      </div>
+      <div class="meta">Generated 2026-06-15 21:24:05</div>
+      <div class="chip-row">
+        <span class="chip">Layer: GOLD</span>
+        <span class="chip">Unload: True</span>
+        <span class="chip">Incremental: False</span>
+      </div>
+
+      <table class="info-table" aria-describedby="job metadata">
+        <tbody>
+          <tr><th>Description</th><td>1 linha por partida: features de forma (18m) + colunas target.</td></tr>
+          <tr><th>Module</th><td>gold_partidas_features</td></tr>
+          <tr><th>Module Path</th><td><pre>./etl/2_gold/gold_partidas_features.py</pre></td></tr>
+          <tr><th>Input Tables</th><td><pre> 'partidas': 'bronze_all_partidas/*.parquet',
+ 'escalacoes': 'bronze_all_escalacoes/*.parquet',
+ 'stats': 'bronze_all_stats_jogador/*.parquet',
+ 'silver_time': 'silver_time_year_month/*.parquet',
+ 'silver_jogador': 'silver_jogador_year_month/*.parquet',
+ 'silver_time_def': 'silver_time_defensivo/*.parquet',
+ 'silver_jogador_def': 'silver_jogador_defensivo/*.parquet' </pre></td></tr>
+          <tr><th>Output Table Name</th><td>partidas_features</td></tr>
+          <tr><th>Partition By</th><td><pre>None</pre></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Job Code</h2>
+      <div class="code-wrap" id="job-code-wrap">
+        <div class="code-toolbar">
+          <button class="btn" id="job-code-toggle" aria-expanded="false" aria-controls="job-code-box">Show full code</button>
+          <button class="btn" id="job-code-copy">Copy</button>
+        </div>
+        <div class="code-box collapsed" id="job-code-box">
+          <pre><code class="language-python">&quot;&quot;&quot;Gold — tabela final orientada a partidas (1 linha por jogo).
+
+Esta é a entrega central do pipeline. Cada linha é uma partida e contém:
+
+  FEATURES (calculadas com dados ESTRITAMENTE anteriores ao mês do jogo — janela
+  de `rolling_window_months`, default 18 meses — para evitar data leakage):
+    • home_team_form_&lt;stat&gt;_mean_18m / away_team_form_&lt;stat&gt;_mean_18m
+        → &quot;forma&quot; recente do TIME (média ponderada por partida nos últimos 18m),
+          a partir de silver_time_year_month.
+    • home_lineup_&lt;stat&gt;_mean_18m / away_lineup_&lt;stat&gt;_mean_18m
+        → média, entre os TITULARES escalados, da forma de 18m de cada jogador,
+          a partir de silver_jogador_year_month.
+      (Hoje usamos só os titulares; trocar para o elenco inteiro é só remover o
+       filtro `is_starter`, pois a silver de jogador já cobre todos.)
+
+  TARGETS (prefixo `target_` — o que realmente aconteceu no jogo, p/ modelagem):
+    • target_result (H/D/A), target_home_goals, target_away_goals
+    • target_&lt;lado&gt;_shots_on_target, target_&lt;lado&gt;_shots
+    • target_&lt;lado&gt;_fouls
+    • target_&lt;lado&gt;_yellow_cards, target_&lt;lado&gt;_expulsions, target_&lt;lado&gt;_red_cards
+
+  NORMALIZAÇÃO (consolidada aqui, não há mais camada diamond):
+    • &lt;feature&gt;_q — versão rank/quantil em (0,1] de cada feature de 18m,
+      calculada DENTRO de cada `source` (comparável entre StatsBomb e FBref).
+
+Tudo em polars. A média móvel ponderada é delegada a
+`macros/features.rolling_window_means` (ver docstring lá para a matemática).
+&quot;&quot;&quot;
+import re
+
+import polars as pl
+
+from macros.features import (
+    get_percentile_stats,
+    get_percentiles,
+    get_player_stats,
+    get_position_groups,
+    get_window_months,
+    quantile_col_name,
+    rolling_window_means,
+    rolling_window_quantiles,
+)
+
+# Estatísticas defensivas coletivas (gols/xG sofridos) usadas no on-off.
+_DEF_CONCEDED_STATS = [&quot;gols_sofridos&quot;, &quot;xg_sofrido&quot;]
+
+
+def _widen_by_side(df_side: pl.DataFrame, value_cols: list[str]) -&gt; pl.DataFrame:
+    &quot;&quot;&quot;Transforma um frame longo (match_id, side, &lt;cols&gt;) em largo home_/away_.
+
+    Em vez de `pivot` (cujos nomes de coluna são ambíguos com múltiplos valores),
+    separamos explicitamente os lados e prefixamos as colunas, garantindo nomes
+    previsíveis: `home_&lt;col&gt;` e `away_&lt;col&gt;`. Junta-se por match_id.
+    &quot;&quot;&quot;
+    home = df_side.filter(pl.col(&quot;side&quot;) == &quot;home&quot;).drop(&quot;side&quot;).rename(
+        {c: f&quot;home_{c}&quot; for c in value_cols}
+    )
+    away = df_side.filter(pl.col(&quot;side&quot;) == &quot;away&quot;).drop(&quot;side&quot;).rename(
+        {c: f&quot;away_{c}&quot; for c in value_cols}
+    )
+    return home.join(away, on=&quot;match_id&quot;, how=&quot;full&quot;, coalesce=True)
+
+
+def _widen_by_side_group(
+    df: pl.DataFrame, value_cols: list[str], groups: list[str]
+) -&gt; pl.DataFrame:
+    &quot;&quot;&quot;Largura por LADO e GRUPO de posição: `home_&lt;grp&gt;_&lt;col&gt;` / `away_&lt;grp&gt;_&lt;col&gt;`.
+
+    Entrada longa: (match_id, side, position_group, &lt;value_cols&gt;). Para cada
+    (lado, grupo) filtra, renomeia e junta por match_id. Permite features como
+    `home_DEF_lineup_ev_interception_mean_18m` ou `away_MID_...`.
+    &quot;&quot;&quot;
+    base = df.select(&quot;match_id&quot;).unique()
+    for side in (&quot;home&quot;, &quot;away&quot;):
+        for grp in groups:
+            part = (
+                df.filter((pl.col(&quot;side&quot;) == side) &amp; (pl.col(&quot;position_group&quot;) == grp))
+                .drop(&quot;side&quot;, &quot;position_group&quot;)
+                .rename({c: f&quot;{side}_{grp}_{c}&quot; for c in value_cols})
+            )
+            base = base.join(part, on=&quot;match_id&quot;, how=&quot;left&quot;)
+    return base
+
+
+def process_data(self, input_tables: dict[str, pl.DataFrame]) -&gt; pl.DataFrame:
+    partidas = input_tables[&quot;partidas&quot;]
+    escalacoes = input_tables[&quot;escalacoes&quot;]
+    stats = input_tables[&quot;stats&quot;]
+    silver_time = input_tables[&quot;silver_time&quot;]
+    silver_jogador = input_tables[&quot;silver_jogador&quot;]
+    silver_time_def = input_tables[&quot;silver_time_def&quot;]
+    silver_jogador_def = input_tables[&quot;silver_jogador_def&quot;]
+
+    stat_cols = get_player_stats()
+    window = get_window_months()
+    groups = get_position_groups()
+    mean_names = [f&quot;{s}_mean_{window}m&quot; for s in stat_cols]  # nomes de saída do rolling
+    def_mean_names = [f&quot;{s}_mean_{window}m&quot; for s in _DEF_CONCEDED_STATS]
+
+    # ------------------------------------------------------------------
+    # Base: uma linha por partida + chaves de calendário e identificação.
+    # ------------------------------------------------------------------
+    base = partidas.select(
+        &quot;match_id&quot;,
+        &quot;match_date&quot;,
+        &quot;year_month&quot;,
+        &quot;month_index&quot;,
+        &quot;competition_name&quot;,
+        &quot;season&quot;,
+        # Provedor da partida (statsbomb/fbref). As features de uma linha são
+        # calculadas só com histórico da MESMA fonte; esta coluna permite
+        # normalizar/segmentar por provedor no downstream (escalas diferentes).
+        &quot;source&quot;,
+        &quot;home_team&quot;,
+        &quot;away_team&quot;,
+        &quot;home_score&quot;,
+        &quot;away_score&quot;,
+    )
+
+    # Mapa partida -&gt; (mês de referência, times de cada lado), em formato longo
+    # (uma linha por lado), para alimentar as janelas móveis.
+    sides = pl.concat(
+        [
+            partidas.select(
+                &quot;match_id&quot;,
+                pl.lit(&quot;home&quot;).alias(&quot;side&quot;),
+                pl.col(&quot;home_team&quot;).alias(&quot;team&quot;),
+                pl.col(&quot;month_index&quot;).alias(&quot;ref_month_index&quot;),
+            ),
+            partidas.select(
+                &quot;match_id&quot;,
+                pl.lit(&quot;away&quot;).alias(&quot;side&quot;),
+                pl.col(&quot;away_team&quot;).alias(&quot;team&quot;),
+                pl.col(&quot;month_index&quot;).alias(&quot;ref_month_index&quot;),
+            ),
+        ]
+    )
+
+    # ==================================================================
+    # FEATURES 1 — forma recente do TIME (silver_time, janela de 18m)
+    # ==================================================================
+    team_form_long = rolling_window_means(
+        monthly=silver_time,
+        requests=sides,
+        entity_keys=[&quot;team&quot;],
+        row_keys=[&quot;match_id&quot;, &quot;side&quot;],
+        stats=stat_cols,
+        window_months=window,
+        prefix=&quot;team_form_&quot;,
+    )
+    team_value_cols = [f&quot;team_form_{n}&quot; for n in mean_names] + [f&quot;team_form_n_partidas_{window}m&quot;]
+    team_form_wide = _widen_by_side(team_form_long, team_value_cols)
+
+    # ==================================================================
+    # FEATURES 2 — forma média dos TITULARES (silver_jogador, janela 18m)
+    # ==================================================================
+    # Titulares de cada partida, com lado, mês de referência e SETOR (posição).
+    titulares = (
+        escalacoes.filter(pl.col(&quot;is_starter&quot;))
+        .select(&quot;match_id&quot;, &quot;team&quot;, &quot;player_id&quot;, &quot;position_group&quot;)
+        .join(
+            sides.select(&quot;match_id&quot;, &quot;side&quot;, &quot;team&quot;, &quot;ref_month_index&quot;),
+            on=[&quot;match_id&quot;, &quot;team&quot;],
+            how=&quot;inner&quot;,
+        )
+    )
+    # Setor de cada (partida, lado, jogador) — para reatar às features (o rolling
+    # devolve só as row_keys).
+    titular_pos = titulares.select(&quot;match_id&quot;, &quot;side&quot;, &quot;player_id&quot;, &quot;position_group&quot;)
+
+    # Forma de 18m de CADA titular...
+    player_form = rolling_window_means(
+        monthly=silver_jogador,
+        requests=titulares,
+        entity_keys=[&quot;player_id&quot;],
+        row_keys=[&quot;match_id&quot;, &quot;side&quot;, &quot;player_id&quot;],
+        stats=stat_cols,
+        window_months=window,
+        prefix=&quot;p_&quot;,
+    ).join(titular_pos, on=[&quot;match_id&quot;, &quot;side&quot;, &quot;player_id&quot;], how=&quot;left&quot;)
+
+    # ...agregada (média) entre TODOS os titulares -&gt; feature do lado.
+    lineup_long = player_form.group_by([&quot;match_id&quot;, &quot;side&quot;]).agg(
+        [pl.col(f&quot;p_{n}&quot;).mean().alias(f&quot;lineup_{n}&quot;) for n in mean_names]
+        + [
+            pl.len().alias(&quot;lineup_n_titulares&quot;),
+            pl.col(f&quot;p_n_partidas_{window}m&quot;).is_not_null().sum().alias(&quot;lineup_n_com_historico&quot;),
+        ]
+    )
+    lineup_value_cols = [f&quot;lineup_{n}&quot; for n in mean_names] + [
+        &quot;lineup_n_titulares&quot;,
+        &quot;lineup_n_com_historico&quot;,
+    ]
+    lineup_wide = _widen_by_side(lineup_long, lineup_value_cols)
+
+    # ...e agregada por SETOR (GK/DEF/MID/FWD) -&gt; avalia zagueiros, meio-campo etc.
+    # Gera home_DEF_&lt;stat&gt;_mean_18m, home_MID_&lt;stat&gt;_mean_18m, away_FWD_..., etc.
+    lineup_pos_long = player_form.group_by([&quot;match_id&quot;, &quot;side&quot;, &quot;position_group&quot;]).agg(
+        [pl.col(f&quot;p_{n}&quot;).mean().alias(f&quot;setor_{n}&quot;) for n in mean_names]
+        + [pl.len().alias(&quot;setor_n_titulares&quot;)]
+    ).filter(pl.col(&quot;position_group&quot;).is_not_null())
+    lineup_pos_value_cols = [f&quot;setor_{n}&quot; for n in mean_names] + [&quot;setor_n_titulares&quot;]
+    lineup_pos_wide = _widen_by_side_group(lineup_pos_long, lineup_pos_value_cols, groups)
+
+    # ==================================================================
+    # FEATURES 3 — PERCENTIS (ex.: p75) de variáveis importantes, 18m
+    # ------------------------------------------------------------------
+    # Percentil exige a distribuição PARTIDA A PARTIDA (não dá para reconstruir
+    # de soma/contagem mensal), então calculamos sobre os valores por partida.
+    # ==================================================================
+    pstats = get_percentile_stats()
+    pquants = get_percentiles()
+
+    team_pct_wide = None
+    lineup_pct_wide = None
+    if pstats and pquants:
+        # ---- TIME: percentil dos TOTAIS do time por partida na janela ----
+        # Total do time em cada partida (soma das contribuições dos jogadores),
+        # mantendo month_index para a janela temporal.
+        team_match_events = stats.group_by([&quot;team&quot;, &quot;match_id&quot;, &quot;month_index&quot;]).agg(
+            [pl.col(s).sum().alias(s) for s in pstats]
+        )
+        team_pct_long = rolling_window_quantiles(
+            events=team_match_events,
+            requests=sides,
+            entity_keys=[&quot;team&quot;],
+            row_keys=[&quot;match_id&quot;, &quot;side&quot;],
+            stats=pstats,
+            quantiles=pquants,
+            window_months=window,
+            prefix=&quot;team_form_&quot;,
+        )
+        team_pct_cols = [
+            quantile_col_name(&quot;team_form_&quot;, s, q, window) for s in pstats for q in pquants
+        ]
+        team_pct_wide = _widen_by_side(team_pct_long, team_pct_cols)
+
+        # ---- TITULARES: percentil por jogador, depois média entre os 11 ----
+        # bronze_stats já é 1 linha por (jogador, partida); usamos como eventos.
+        player_match_events = stats.select([&quot;player_id&quot;, &quot;month_index&quot;, *pstats])
+        player_pct = rolling_window_quantiles(
+            events=player_match_events,
+            requests=titulares,
+            entity_keys=[&quot;player_id&quot;],
+            row_keys=[&quot;match_id&quot;, &quot;side&quot;, &quot;player_id&quot;],
+            stats=pstats,
+            quantiles=pquants,
+            window_months=window,
+            prefix=&quot;p_&quot;,
+        )
+        lineup_pct_long = player_pct.group_by([&quot;match_id&quot;, &quot;side&quot;]).agg(
+            [
+                pl.col(quantile_col_name(&quot;p_&quot;, s, q, window))
+                .mean()
+                .alias(quantile_col_name(&quot;lineup_&quot;, s, q, window))
+                for s in pstats
+                for q in pquants
+            ]
+        )
+        lineup_pct_cols = [
+            quantile_col_name(&quot;lineup_&quot;, s, q, window) for s in pstats for q in pquants
+        ]
+        lineup_pct_wide = _widen_by_side(lineup_pct_long, lineup_pct_cols)
+
+    # ==================================================================
+    # FEATURES 4 — SOLIDEZ DEFENSIVA: gols/xG sofridos + on-off (18m)
+    # ------------------------------------------------------------------
+    # Defesa é coletiva: medimos o que o TIME sofre e o quanto sofre COM o
+    # jogador/setor em campo. on-off = (com o jogador) − (baseline do time);
+    # NEGATIVO ⇒ time sofre menos com ele ⇒ bom defensivamente NAQUELE time.
+    # ==================================================================
+    # (a) Baseline do time (média de gols/xG sofridos por partida na janela).
+    team_def_long = rolling_window_means(
+        monthly=silver_time_def,
+        requests=sides,
+        entity_keys=[&quot;team&quot;],
+        row_keys=[&quot;match_id&quot;, &quot;side&quot;],
+        stats=_DEF_CONCEDED_STATS,
+        window_months=window,
+        prefix=&quot;team_def_&quot;,
+    )
+    team_def_cols = [f&quot;team_def_{n}&quot; for n in def_mean_names]
+    team_def_wide = _widen_by_side(team_def_long, team_def_cols)
+
+    # (b) &quot;Com o jogador&quot;: gols/xG sofridos pelo time quando cada titular jogou.
+    player_def = rolling_window_means(
+        monthly=silver_jogador_def,
+        requests=titulares,
+        entity_keys=[&quot;player_id&quot;],
+        row_keys=[&quot;match_id&quot;, &quot;side&quot;, &quot;player_id&quot;],
+        stats=_DEF_CONCEDED_STATS,
+        window_months=window,
+        prefix=&quot;p_def_&quot;,
+    ).join(titular_pos, on=[&quot;match_id&quot;, &quot;side&quot;, &quot;player_id&quot;], how=&quot;left&quot;)
+
+    # média entre todos os titulares...
+    lineup_def_long = player_def.group_by([&quot;match_id&quot;, &quot;side&quot;]).agg(
+        [pl.col(f&quot;p_def_{n}&quot;).mean().alias(f&quot;lineup_def_{n}&quot;) for n in def_mean_names]
+    )
+    lineup_def_wide = _widen_by_side(lineup_def_long, [f&quot;lineup_def_{n}&quot; for n in def_mean_names])
+
+    # ...e por setor (DEF/MID/...): solidez do time com aquele setor titular.
+    setor_def_long = player_def.group_by([&quot;match_id&quot;, &quot;side&quot;, &quot;position_group&quot;]).agg(
+        [pl.col(f&quot;p_def_{n}&quot;).mean().alias(f&quot;setor_def_{n}&quot;) for n in def_mean_names]
+    ).filter(pl.col(&quot;position_group&quot;).is_not_null())
+    setor_def_wide = _widen_by_side_group(setor_def_long, [f&quot;setor_def_{n}&quot; for n in def_mean_names], groups)
+
+    # ==================================================================
+    # TARGETS — o que aconteceu de fato na partida
+    # ==================================================================
+    # (a) Estatísticas reais por lado, somando as contribuições dos jogadores.
+    stats_side = stats.group_by([&quot;match_id&quot;, &quot;side&quot;]).agg(
+        pl.col(&quot;chutes_no_alvo&quot;).sum().alias(&quot;shots_on_target&quot;),
+        pl.col(&quot;ev_shot&quot;).sum().alias(&quot;shots&quot;),
+        pl.col(&quot;ev_foul_committed&quot;).sum().alias(&quot;fouls&quot;),
+    )
+    # (b) Cartões/expulsões por lado, a partir das escalações (mais fiel).
+    cartoes_side = (
+        escalacoes.join(
+            sides.select(&quot;match_id&quot;, &quot;team&quot;, &quot;side&quot;),
+            on=[&quot;match_id&quot;, &quot;team&quot;],
+            how=&quot;inner&quot;,
+        )
+        .group_by([&quot;match_id&quot;, &quot;side&quot;])
+        .agg(
+            pl.col(&quot;cards_yellow&quot;).sum().alias(&quot;yellow_cards&quot;),
+            pl.col(&quot;cards_expulsion&quot;).sum().alias(&quot;expulsions&quot;),
+            pl.col(&quot;cards_red&quot;).sum().alias(&quot;red_cards&quot;),
+        )
+    )
+    actuals_side = stats_side.join(cartoes_side, on=[&quot;match_id&quot;, &quot;side&quot;], how=&quot;full&quot;, coalesce=True)
+    actuals_value_cols = [
+        &quot;shots_on_target&quot;,
+        &quot;shots&quot;,
+        &quot;fouls&quot;,
+        &quot;yellow_cards&quot;,
+        &quot;expulsions&quot;,
+        &quot;red_cards&quot;,
+    ]
+    actuals_wide = _widen_by_side(actuals_side, actuals_value_cols)
+
+    # ==================================================================
+    # Montagem final: base + features + targets
+    # ==================================================================
+    final = (
+        base.join(team_form_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)
+        .join(lineup_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)
+        .join(lineup_pos_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)   # ataque por setor
+        .join(team_def_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)     # baseline defensiva do time
+        .join(lineup_def_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)   # sofrido com os titulares
+        .join(setor_def_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)    # sofrido por setor
+    )
+    # Percentis (opcionais — só se configurados em feature_config.yaml).
+    if team_pct_wide is not None:
+        final = final.join(team_pct_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)
+    if lineup_pct_wide is not None:
+        final = final.join(lineup_pct_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)
+    final = final.join(actuals_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)
+
+    # ------------------------------------------------------------------
+    # on-off defensivo: (sofrido com o jogador/setor) − (baseline do time).
+    # NEGATIVO = defende melhor que a média do time. Geral e por setor.
+    # ------------------------------------------------------------------
+    onoff_exprs = []
+    for side in (&quot;home&quot;, &quot;away&quot;):
+        for n in def_mean_names:
+            onoff_exprs.append(
+                (pl.col(f&quot;{side}_lineup_def_{n}&quot;) - pl.col(f&quot;{side}_team_def_{n}&quot;))
+                .alias(f&quot;{side}_onoff_{n}&quot;)
+            )
+            for grp in groups:
+                onoff_exprs.append(
+                    (pl.col(f&quot;{side}_{grp}_setor_def_{n}&quot;) - pl.col(f&quot;{side}_team_def_{n}&quot;))
+                    .alias(f&quot;{side}_{grp}_onoff_{n}&quot;)
+                )
+    final = final.with_columns(onoff_exprs)
+
+    # ------------------------------------------------------------------
+    # Índice de confiabilidade defensiva = ações / (ações + erros), 18m.
+    # Geral (lineup) e por setor. Mais alto = mais ações &quot;limpas&quot;.
+    # ------------------------------------------------------------------
+    acoes = f&quot;def_acoes_mean_{window}m&quot;
+    erros = f&quot;def_erros_mean_{window}m&quot;
+    rel_exprs = []
+    for side in (&quot;home&quot;, &quot;away&quot;):
+        rel_exprs.append(
+            (
+                pl.col(f&quot;{side}_lineup_{acoes}&quot;)
+                / (pl.col(f&quot;{side}_lineup_{acoes}&quot;) + pl.col(f&quot;{side}_lineup_{erros}&quot;))
+            ).alias(f&quot;{side}_lineup_def_confiabilidade_{window}m&quot;)
+        )
+        for grp in groups:
+            rel_exprs.append(
+                (
+                    pl.col(f&quot;{side}_{grp}_setor_{acoes}&quot;)
+                    / (pl.col(f&quot;{side}_{grp}_setor_{acoes}&quot;) + pl.col(f&quot;{side}_{grp}_setor_{erros}&quot;))
+                ).alias(f&quot;{side}_{grp}_def_confiabilidade_{window}m&quot;)
+            )
+    final = final.with_columns(rel_exprs)
+
+    # Targets de placar/resultado, prefixados com `target_`.
+    final = final.with_columns(
+        pl.col(&quot;home_score&quot;).alias(&quot;target_home_goals&quot;),
+        pl.col(&quot;away_score&quot;).alias(&quot;target_away_goals&quot;),
+        pl.when(pl.col(&quot;home_score&quot;) &gt; pl.col(&quot;away_score&quot;))
+        .then(pl.lit(&quot;H&quot;))
+        .when(pl.col(&quot;home_score&quot;) &lt; pl.col(&quot;away_score&quot;))
+        .then(pl.lit(&quot;A&quot;))
+        .otherwise(pl.lit(&quot;D&quot;))
+        .alias(&quot;target_result&quot;),
+    )
+
+    # Renomeia os agregados reais por lado para o namespace `target_`.
+    rename_targets = {}
+    for side in (&quot;home&quot;, &quot;away&quot;):
+        for col in actuals_value_cols:
+            rename_targets[f&quot;{side}_{col}&quot;] = f&quot;target_{side}_{col}&quot;
+    final = final.rename(rename_targets)
+
+    # ==================================================================
+    # NORMALIZAÇÃO por FONTE (rank/quantil) — antes ficava na diamond; agora
+    # TUDO na gold. Para cada feature de 18m gera uma versão `_q` em (0,1]
+    # comparável entre provedores (StatsBomb vs FBref/Opta), agrupando por
+    # `source` (preserva diferença de força entre ligas da mesma fonte).
+    # Linhas sem histórico (feature nula) permanecem nulas no `_q`.
+    # ==================================================================
+    feature_cols = [
+        c
+        for c in final.columns
+        if (c.endswith(f&quot;_mean_{window}m&quot;) or re.search(rf&quot;_p\d+_{window}m$&quot;, c))
+        and not c.startswith(&quot;target_&quot;)
+    ]
+    norm_exprs = [
+        (pl.col(c).rank(method=&quot;average&quot;) / pl.col(c).count())
+        .over(&quot;source&quot;)
+        .alias(f&quot;{c}_q&quot;)
+        for c in feature_cols
+    ]
+    final = final.with_columns(norm_exprs)
+
+    return final.sort(&quot;match_date&quot;)
+</code></pre>
+        </div>
+      </div>
+
+      <h2>Lineage</h2>
+      <div class="diagram-shell">
+        <div class="mermaid">
+flowchart LR
+  %% Node declarations
+  subgraph flatfile
+    bronze_all_stats_jogador/*.parquet(bronze_all_stats_jogador/*.parquet)
+    bronze_all_escalacoes/*.parquet(bronze_all_escalacoes/*.parquet)
+    silver_jogador_defensivo/*.parquet(silver_jogador_defensivo/*.parquet)
+    silver_jogador_year_month/*.parquet(silver_jogador_year_month/*.parquet)
+    silver_time_year_month/*.parquet(silver_time_year_month/*.parquet)
+    silver_time_defensivo/*.parquet(silver_time_defensivo/*.parquet)
+    bronze_all_partidas/*.parquet(bronze_all_partidas/*.parquet)
+  end
+  %% Edges
+  bronze_all_partidas/*.parquet --> gold_partidas_features
+  silver_time_defensivo/*.parquet --> gold_partidas_features
+  bronze_all_stats_jogador/*.parquet --> gold_partidas_features
+  bronze_all_escalacoes/*.parquet --> gold_partidas_features
+  silver_jogador_defensivo/*.parquet --> gold_partidas_features
+  silver_time_year_month/*.parquet --> gold_partidas_features
+  silver_jogador_year_month/*.parquet --> gold_partidas_features
+  %% Classes for groups
+  classDef flatfile stroke:#333333,fill:#EFEFEF,stroke-width:1px,color:#0F172A;
+  class bronze_all_stats_jogador/*.parquet,bronze_all_escalacoes/*.parquet,silver_jogador_defensivo/*.parquet,silver_jogador_year_month/*.parquet,silver_time_year_month/*.parquet,silver_time_defensivo/*.parquet,bronze_all_partidas/*.parquet flatfile
+        </div>
+      </div>
+
+      <h2>Table Schema</h2>
+      <table class="schema-table" aria-describedby="table schema">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Comment</th>
+            <th>Parent</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td>match_id</td><td>large_string</td><td></td><td>match_id</td></tr>
+<tr><td>match_date</td><td>date32[day]</td><td></td><td>flatfile_sb_partidas.match_date, flatfile_fifa_schedule.match_date, bronze_partidas.match_date, bronze_fifa_matches.match_date, silver_fifa_match_snapshot.match_date</td></tr>
+<tr><td>year_month</td><td>int64</td><td></td><td>bronze_partidas.year_month, silver_jogador_year_month.year_month, silver_time_year_month.year_month, silver_time_defensivo.year_month, silver_jogador_defensivo.year_month</td></tr>
+<tr><td>month_index</td><td>int64</td><td></td><td>bronze_partidas.month_index, silver_jogador_year_month.month_index, silver_time_year_month.month_index, silver_time_defensivo.month_index, silver_jogador_defensivo.month_index</td></tr>
+<tr><td>competition_name</td><td>large_string</td><td></td><td>flatfile_sb_partidas.competition_name, flatfile_sb_competicoes.competition_name, bronze_partidas.competition_name</td></tr>
+<tr><td>season</td><td>large_string</td><td></td><td>flatfile_sb_partidas.season, flatfile_fbref_jogadores_temporada.season, flatfile_fbref_jogadores_chutes.season, flatfile_fbref_jogadores_diversos.season, flatfile_fbref_jogadores_minutos.season, flatfile_fbref_goleiros.season, flatfile_fifa_schedule.season, bronze_partidas.season, bronze_fifa_matches.season, silver_fifa_match_snapshot.season</td></tr>
+<tr><td>source</td><td>large_string</td><td></td><td>bronze_partidas.source, bronze_escalacoes.source</td></tr>
+<tr><td>home_team</td><td>large_string</td><td></td><td>flatfile_sb_partidas.home_team, flatfile_fifa_schedule.home_team, bronze_partidas.home_team, bronze_fifa_matches.home_team, silver_fifa_match_snapshot.home_team</td></tr>
+<tr><td>away_team</td><td>large_string</td><td></td><td>flatfile_sb_partidas.away_team, flatfile_fifa_schedule.away_team, bronze_partidas.away_team, bronze_fifa_matches.away_team, silver_fifa_match_snapshot.away_team</td></tr>
+<tr><td>home_score</td><td>int64</td><td></td><td>flatfile_sb_partidas.home_score, bronze_partidas.home_score</td></tr>
+<tr><td>away_score</td><td>int64</td><td></td><td>flatfile_sb_partidas.away_score, bronze_partidas.away_score</td></tr>
+<tr><td>home_team_form_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_n_partidas_18m</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_team_form_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_n_partidas_18m</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_lineup_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_lineup_n_com_historico</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_lineup_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_lineup_n_com_historico</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_gols_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_assistencias_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_chutes_no_alvo_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_xg_total_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_passes_completos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_key_passes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_shot_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_pass_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_foul_committed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_foul_won_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_interception_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_ball_recovery_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_dribble_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_duel_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_pressure_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_block_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_clearance_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_dispossessed_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_miscontrol_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_acoes_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_erros_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_n_titulares</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_team_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>team_def_n_partidas_18m</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_team_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>team_def_n_partidas_18m_right</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_gols_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_chutes_no_alvo_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_xg_total_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_key_passes_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_shot_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_pass_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_gols_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_chutes_no_alvo_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_xg_total_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_key_passes_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_shot_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_pass_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_gols_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_chutes_no_alvo_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_xg_total_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_key_passes_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_shot_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_pass_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_gols_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_chutes_no_alvo_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_xg_total_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_key_passes_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_shot_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_pass_p75_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_home_shots_on_target</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_home_shots</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_home_fouls</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_home_yellow_cards</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>target_home_expulsions</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>target_home_red_cards</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>target_away_shots_on_target</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_away_shots</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_away_fouls</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_away_yellow_cards</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>target_away_expulsions</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>target_away_red_cards</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_onoff_gols_sofridos_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_onoff_xg_sofrido_mean_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_def_confiabilidade_18m</td><td>double</td><td></td><td></td></tr>
+<tr><td>target_home_goals</td><td>int64</td><td></td><td></td></tr>
+<tr><td>target_away_goals</td><td>int64</td><td></td><td></td></tr>
+<tr><td>target_result</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_team_form_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_gols_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_assistencias_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_chutes_no_alvo_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_xg_total_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_passes_completos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_key_passes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_shot_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_pass_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_foul_committed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_foul_won_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_interception_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_ball_recovery_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_dribble_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_duel_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_pressure_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_block_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_clearance_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_dispossessed_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_ev_miscontrol_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_acoes_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_erros_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_setor_def_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_gols_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_chutes_no_alvo_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_xg_total_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_key_passes_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_shot_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_form_ev_pass_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_gols_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_chutes_no_alvo_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_xg_total_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_key_passes_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_shot_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_form_ev_pass_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_gols_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_chutes_no_alvo_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_xg_total_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_key_passes_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_shot_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_lineup_ev_pass_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_gols_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_chutes_no_alvo_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_xg_total_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_key_passes_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_shot_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_lineup_ev_pass_p75_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_GK_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_DEF_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_MID_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_FWD_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_onoff_gols_sofridos_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_GK_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_DEF_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_MID_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_FWD_onoff_xg_sofrido_mean_18m_q</td><td>double</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        lineColor: "#888888",
+        tertiaryColor: "#aaaaaa",
+        primaryTextColor: "#111111",
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica"
+      }
+    });
+
+    const toggleBtn = document.getElementById("job-code-toggle");
+    const copyBtn = document.getElementById("job-code-copy");
+    const codeBox = document.getElementById("job-code-box");
+
+    function setExpanded(expanded) {
+      codeBox.classList.toggle("collapsed", !expanded);
+      toggleBtn.setAttribute("aria-expanded", String(expanded));
+      toggleBtn.textContent = expanded ? "Hide full code" : "Show full code";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      setExpanded(!expanded);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const codeText = codeBox.querySelector("code").innerText;
+      try {
+        await navigator.clipboard.writeText(codeText);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+      } catch (e) {
+        copyBtn.textContent = "Press Ctrl/Cmd+C";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+      }
+    });
+
+    setExpanded(false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Dependências de RUNTIME do app Streamlit (app/streamlit_app.py).
+# (NÃO inclui o pipeline ETL/polars/optuna — isso é offline.)
+streamlit>=1.40
+pandas>=2.2
+numpy>=1.26
+pyarrow>=15
+lightgbm>=4.3
+matplotlib>=3.8

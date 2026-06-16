@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>fifa_partidas</title>
+  <style>
+    :root {
+      --bg: #353535ff;
+      --text: #500b3aff;
+      --panel: #f7f7f7;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,.35);
+      --accent: #d54e62ff;
+      --rule: #1f2937;
+      --muted: #94a3b8;
+      --cell: #555555;
+      --link: #60a5fa;
+      --btn: #d54e62ff;
+      --btn-text: #fff;
+      --btn-hover: #b8122d;
+      --code-bg: #353535ff;
+      --code-border: #353535ff;
+      --code-inset: rgba(255,255,255,.03);
+      --fade-top: rgba(11,16,33,0);
+      --fade-mid: rgba(11,16,33,.9);
+      --fade-bottom: rgba(11,16,33,1);
+      --mermaid-text: #111111;
+      --mermaid-line: #888888;
+      --mermaid-tertiary: #aaaaaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -70px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--mermaid-tertiary) 0%, transparent 70%);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--accent);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 2px;
+    }
+
+    .info-table,
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td,
+    .schema-table th,
+    .schema-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td,
+    .schema-table tr:last-child td { border-bottom: none; }
+
+    .info-table th {
+      color: var(--accent);
+      white-space: nowrap;
+      width: 200px;
+      font-weight: 700;
+    }
+
+    .info-table td,
+    .schema-table td { color: var(--cell); }
+
+    .schema-table thead th {
+      color: var(--accent);
+      background: var(--panel);
+      font-weight: 700;
+    }
+
+    .code-wrap { position: relative; }
+
+    .code-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .code-toolbar .btn {
+      appearance: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .code-toolbar .btn:hover { background: var(--btn-hover); }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height .25s ease;
+      box-shadow: inset 0 1px 0 var(--code-inset);
+    }
+
+    .code-box.collapsed { max-height: 180px; }
+
+    .code-box.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      background: linear-gradient(180deg, var(--fade-top) 0%, var(--fade-mid) 90%, var(--fade-bottom) 100%);
+      pointer-events: none;
+    }
+
+    pre { margin: 0; }
+
+    pre code.hljs {
+      background: var(--code-bg) !important;
+      white-space: pre-wrap !important;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .diagram-shell {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      overflow: auto;
+    }
+
+    .mermaid { min-width: 720px; }
+
+    .mermaid svg path,
+    .mermaid svg line,
+    .mermaid svg rect,
+    .mermaid svg polygon,
+    .mermaid svg text { fill: var(--mermaid-text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .footnote {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .panel { padding: 14px; }
+      .info-table th { width: 160px; }
+      .mermaid { min-width: 620px; }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="title-row">
+        <h1>fifa_partidas</h1>
+      </div>
+      <div class="meta">Generated 2026-06-15 21:24:06</div>
+      <div class="chip-row">
+        <span class="chip">Layer: GOLD</span>
+        <span class="chip">Unload: True</span>
+        <span class="chip">Incremental: False</span>
+      </div>
+
+      <table class="info-table" aria-describedby="job metadata">
+        <tbody>
+          <tr><th>Description</th><td>FIFA → 1 linha por partida: 11 titulares de cada lado + score agregado + alvos.</td></tr>
+          <tr><th>Module</th><td>gold_fifa_partidas</td></tr>
+          <tr><th>Module Path</th><td><pre>./etl/2_gold/gold_fifa_partidas.py</pre></td></tr>
+          <tr><th>Input Tables</th><td><pre> 'matches': 'silver_fifa_match_snapshot/*.parquet',
+ 'xi': 'silver_fifa_team_snapshot/*.parquet' </pre></td></tr>
+          <tr><th>Output Table Name</th><td>fifa_partidas</td></tr>
+          <tr><th>Partition By</th><td><pre>None</pre></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Job Code</h2>
+      <div class="code-wrap" id="job-code-wrap">
+        <div class="code-toolbar">
+          <button class="btn" id="job-code-toggle" aria-expanded="false" aria-controls="job-code-box">Show full code</button>
+          <button class="btn" id="job-code-copy">Copy</button>
+        </div>
+        <div class="code-box collapsed" id="job-code-box">
+          <pre><code class="language-python">&quot;&quot;&quot;Gold (FIFA) — dataset wide: 1 linha por partida × XI do FIFA dos dois lados.
+
+Junta os RESULTADOS de partida (silver_fifa_match_snapshot, já com o snapshot do
+FIFA vigente) ao XI titular de cada time naquele snapshot (silver_fifa_team_snapshot)
+e monta UMA linha por partida com:
+
+  • identificação + alvos: home/away_team, placar, `result` (H/D/A),
+    `target`/`home_result`/`away_result` (W/D/L);
+  • para CADA lado, os 11 titulares (`{lado}_p01..p11_{name,position,&lt;attrs&gt;}`)
+    com seus stats do FIFA (overall, potential, value_eur, age, pace, shooting,
+    passing, dribbling, defending, physic);
+  • o SCORE AGREGADO do time: `{lado}_xi_count`, `{lado}_xi_&lt;attr&gt;_mean`,
+    `{lado}_xi_overall_{max,min}` e médias por setor `{lado}_xi_overall_mean_&lt;SEC&gt;`.
+
+Casamento de nome (schedule ↔ FIFA): normalização (sem acento/pontuação/stopwords)
++ fallback fuzzy (difflib), reaproveitando `macros.fifa`. Clubes casam DENTRO do
+pool de `fifa_league_ids` da competição (resolve Serie A ITA=31 vs BRA=7);
+seleções casam pela nationality (com aliases). Lados não casados ficam com slots
+nulos e `{lado}_matched=False`.
+&quot;&quot;&quot;
+import polars as pl
+
+from macros.fifa import (
+    CLUB_ALIASES,
+    FIFA_PLAYER_ATTRS,
+    N_STARTERS,
+    NATION_ALIASES,
+    build_team_matcher,
+    competition_league_ids,
+)
+
+_NATION_SCOPE = -1  # scope_id sentinela p/ seleções (não têm league_id)
+
+
+def _resolve_crosswalk(matches: pl.DataFrame, xi: pl.DataFrame) -&gt; pl.DataFrame:
+    &quot;&quot;&quot;Resolve, por (partida, lado), o team_key do FIFA correspondente.
+
+    Devolve: match_id, side, snapshot_date, scope_id, team_key (ou None se não
+    casou). O casamento é por (snapshot, pool de league_id) p/ clubes e por
+    snapshot p/ seleções, com matcher fuzzy cacheado por escopo.
+    &quot;&quot;&quot;
+    pools = competition_league_ids()
+
+    # Conjuntos de team_keys disponíveis por escopo (do XI do FIFA).
+    club_keys: dict[tuple, list[str]] = {}
+    for snap, lid, key in (
+        xi.filter(pl.col(&quot;team_type&quot;) == &quot;club&quot;)
+        .select(&quot;snapshot_date&quot;, &quot;league_id&quot;, &quot;team_key&quot;).unique().iter_rows()
+    ):
+        club_keys.setdefault((snap, lid), []).append(key)
+    nation_keys: dict[object, list[str]] = {}
+    for snap, key in (
+        xi.filter(pl.col(&quot;team_type&quot;) == &quot;nation&quot;)
+        .select(&quot;snapshot_date&quot;, &quot;team_key&quot;).unique().iter_rows()
+    ):
+        nation_keys.setdefault(snap, []).append(key)
+
+    club_matchers: dict[tuple, object] = {}
+    nation_matchers: dict[object, object] = {}
+
+    def resolve_club(snap, comp_code, key):
+        key = CLUB_ALIASES.get(key, key)  # apelidos football-data → FIFA
+        for lid in pools.get(comp_code, []):
+            roster = club_keys.get((snap, lid))
+            if not roster:
+                continue
+            fn = club_matchers.get((snap, lid))
+            if fn is None:
+                fn = club_matchers[(snap, lid)] = build_team_matcher(roster)
+            hit = fn(key)
+            if hit:
+                return lid, hit
+        return None, None
+
+    def resolve_nation(snap, key):
+        roster = nation_keys.get(snap)
+        if not roster:
+            return None
+        fn = nation_matchers.get(snap)
+        if fn is None:
+            fn = nation_matchers[snap] = build_team_matcher(roster)
+        return fn(NATION_ALIASES.get(key, key))
+
+    rows = []
+    cols = [&quot;match_id&quot;, &quot;snapshot_date&quot;, &quot;competition_code&quot;, &quot;match_type&quot;,
+            &quot;home_key&quot;, &quot;away_key&quot;]
+    for m in matches.select(cols).iter_rows(named=True):
+        snap = m[&quot;snapshot_date&quot;]
+        for side, key in ((&quot;home&quot;, m[&quot;home_key&quot;]), (&quot;away&quot;, m[&quot;away_key&quot;])):
+            scope_id, resolved = None, None
+            if m[&quot;match_type&quot;] == &quot;club&quot;:
+                scope_id, resolved = resolve_club(snap, m[&quot;competition_code&quot;], key)
+            else:
+                resolved = resolve_nation(snap, key)
+                scope_id = _NATION_SCOPE if resolved else None
+            rows.append({
+                &quot;match_id&quot;: m[&quot;match_id&quot;], &quot;side&quot;: side, &quot;snapshot_date&quot;: snap,
+                &quot;scope_id&quot;: scope_id, &quot;team_key&quot;: resolved,
+            })
+
+    return pl.DataFrame(
+        rows,
+        schema={
+            &quot;match_id&quot;: pl.Utf8, &quot;side&quot;: pl.Utf8, &quot;snapshot_date&quot;: pl.Date,
+            &quot;scope_id&quot;: pl.Int64, &quot;team_key&quot;: pl.Utf8,
+        },
+    )
+
+
+def _player_slot_exprs() -&gt; list[pl.Expr]:
+    &quot;&quot;&quot;Expressões p/ pivotar os 11 titulares de cada lado em colunas wide.&quot;&quot;&quot;
+    exprs: list[pl.Expr] = []
+    for side in (&quot;home&quot;, &quot;away&quot;):
+        for i in range(1, N_STARTERS + 1):
+            p = f&quot;{side}_p{i:02d}&quot;
+            sel = (pl.col(&quot;side&quot;) == side) &amp; (pl.col(&quot;slot&quot;) == i)
+            exprs.append(pl.col(&quot;player_name&quot;).filter(sel).first().alias(f&quot;{p}_name&quot;))
+            exprs.append(pl.col(&quot;position&quot;).filter(sel).first().alias(f&quot;{p}_position&quot;))
+            for a in FIFA_PLAYER_ATTRS:
+                exprs.append(pl.col(a).filter(sel).first().alias(f&quot;{p}_{a}&quot;))
+    return exprs
+
+
+def _side_aggregate_exprs() -&gt; list[pl.Expr]:
+    &quot;&quot;&quot;Agregados do XI por lado: contagem, médias, max/min, médias por setor e
+    SCORES de time ponderados por posição (*1*/*2*).
+
+    Scores de time (a partir de cada jogador do XI):
+      • team_avg_score    — média do `overall` dos 11 titulares.
+      • team_attack_score — média, entre os FWD, de (shooting+pace+dribbling)/3.
+      • team_mid_score    — média, entre os MID, de (passing+dribbling)/2.
+      • team_def_score    — média, entre os DEF, de (defending+physic)/2.
+      • team_gk_score     — média do `overall` dos GK (atributos de campo são
+                            nulos p/ goleiro no FIFA, então usamos overall).
+    &quot;&quot;&quot;
+    exprs: list[pl.Expr] = []
+    for side in (&quot;home&quot;, &quot;away&quot;):
+        sel = pl.col(&quot;side&quot;) == side
+        exprs.append(pl.col(&quot;player_name&quot;).filter(sel).len().alias(f&quot;{side}_xi_count&quot;))
+        for a in FIFA_PLAYER_ATTRS:
+            exprs.append(pl.col(a).filter(sel).mean().alias(f&quot;{side}_xi_{a}_mean&quot;))
+        exprs.append(pl.col(&quot;overall&quot;).filter(sel).max().alias(f&quot;{side}_xi_overall_max&quot;))
+        exprs.append(pl.col(&quot;overall&quot;).filter(sel).min().alias(f&quot;{side}_xi_overall_min&quot;))
+        for sec in (&quot;GK&quot;, &quot;DEF&quot;, &quot;MID&quot;, &quot;FWD&quot;):
+            ssec = sel &amp; (pl.col(&quot;sector&quot;) == sec)
+            exprs.append(
+                pl.col(&quot;overall&quot;).filter(ssec).mean().alias(f&quot;{side}_xi_overall_mean_{sec}&quot;)
+            )
+        exprs.append(pl.col(&quot;squad_source&quot;).filter(sel).first().alias(f&quot;{side}_squad_source&quot;))
+
+        # --- *1* score médio do time + *2* scores ponderados por posição ---
+        sel_fwd = sel &amp; (pl.col(&quot;sector&quot;) == &quot;FWD&quot;)
+        sel_mid = sel &amp; (pl.col(&quot;sector&quot;) == &quot;MID&quot;)
+        sel_def = sel &amp; (pl.col(&quot;sector&quot;) == &quot;DEF&quot;)
+        sel_gk = sel &amp; (pl.col(&quot;sector&quot;) == &quot;GK&quot;)
+        attack = (pl.col(&quot;shooting&quot;) + pl.col(&quot;pace&quot;) + pl.col(&quot;dribbling&quot;)) / 3.0
+        midf = (pl.col(&quot;passing&quot;) + pl.col(&quot;dribbling&quot;)) / 2.0
+        defe = (pl.col(&quot;defending&quot;) + pl.col(&quot;physic&quot;)) / 2.0
+        exprs.append(pl.col(&quot;overall&quot;).filter(sel).mean().alias(f&quot;{side}_team_avg_score&quot;))
+        exprs.append(attack.filter(sel_fwd).mean().alias(f&quot;{side}_team_attack_score&quot;))
+        exprs.append(midf.filter(sel_mid).mean().alias(f&quot;{side}_team_mid_score&quot;))
+        exprs.append(defe.filter(sel_def).mean().alias(f&quot;{side}_team_def_score&quot;))
+        exprs.append(pl.col(&quot;overall&quot;).filter(sel_gk).mean().alias(f&quot;{side}_team_gk_score&quot;))
+    return exprs
+
+
+def _win_rate_features(matches: pl.DataFrame) -&gt; pl.DataFrame:
+    &quot;&quot;&quot;Win streak normalizado = VITÓRIAS nas últimas 10 partidas / 10, por lado.
+
+    Sem vazamento: só conta jogos ESTRITAMENTE anteriores (shift(1)) à partida de
+    referência, por time, na ordem cronológica. Devolve (match_id,
+    home_win_rate_last10, away_win_rate_last10).
+    &quot;&quot;&quot;
+    home = matches.select(
+        &quot;match_id&quot;, &quot;match_date&quot;,
+        pl.lit(&quot;home&quot;).alias(&quot;side&quot;),
+        pl.col(&quot;home_team&quot;).alias(&quot;team&quot;),
+        (pl.col(&quot;target&quot;) == &quot;W&quot;).cast(pl.Int64).alias(&quot;win&quot;),
+    )
+    away = matches.select(
+        &quot;match_id&quot;, &quot;match_date&quot;,
+        pl.lit(&quot;away&quot;).alias(&quot;side&quot;),
+        pl.col(&quot;away_team&quot;).alias(&quot;team&quot;),
+        (pl.col(&quot;away_result&quot;) == &quot;W&quot;).cast(pl.Int64).alias(&quot;win&quot;),
+    )
+    long = pl.concat([home, away]).sort([&quot;team&quot;, &quot;match_date&quot;])
+
+    long = long.with_columns(
+        # vitórias nas até 10 partidas anteriores (shift(1) exclui a atual).
+        pl.col(&quot;win&quot;).shift(1).rolling_sum(window_size=10, min_periods=1).over(&quot;team&quot;).alias(&quot;_w&quot;),
+        # nº de partidas anteriores consideradas (posição na ordem, no máx. 10).
+        pl.min_horizontal(pl.int_range(pl.len()).over(&quot;team&quot;), 10).alias(&quot;_n&quot;),
+    ).with_columns(
+        pl.when(pl.col(&quot;_n&quot;) &gt; 0)
+        .then(pl.col(&quot;_w&quot;).fill_null(0) / 10.0)  # normalizado por 10 (win streak)
+        .otherwise(0.0)
+        .alias(&quot;win_rate_last10&quot;)
+    )
+
+    home_wr = long.filter(pl.col(&quot;side&quot;) == &quot;home&quot;).select(
+        &quot;match_id&quot;, pl.col(&quot;win_rate_last10&quot;).alias(&quot;home_win_rate_last10&quot;)
+    )
+    away_wr = long.filter(pl.col(&quot;side&quot;) == &quot;away&quot;).select(
+        &quot;match_id&quot;, pl.col(&quot;win_rate_last10&quot;).alias(&quot;away_win_rate_last10&quot;)
+    )
+    return home_wr.join(away_wr, on=&quot;match_id&quot;, how=&quot;full&quot;, coalesce=True)
+
+
+def _mirror(final: pl.DataFrame) -&gt; pl.DataFrame:
+    &quot;&quot;&quot;Espelha cada partida (HOME↔AWAY) — data augmentation que dobra a tabela.
+
+    Troca TODAS as colunas `home_*`↔`away_*` (jogadores, scores, win rate, flags,
+    placar, time) e inverte os alvos não-prefixados: `result` H↔A, `target` W↔L
+    (D fica D). `home_result`/`away_result` são trocados pela renomeação. O
+    `match_id` recebe sufixo `:mirror` para permanecer único.
+    &quot;&quot;&quot;
+    swap = {}
+    for c in final.columns:
+        if c.startswith(&quot;home_&quot;):
+            swap[c] = &quot;away_&quot; + c[len(&quot;home_&quot;):]
+        elif c.startswith(&quot;away_&quot;):
+            swap[c] = &quot;home_&quot; + c[len(&quot;away_&quot;):]
+    mirror = final.rename(swap).with_columns(
+        pl.when(pl.col(&quot;result&quot;) == &quot;H&quot;).then(pl.lit(&quot;A&quot;))
+        .when(pl.col(&quot;result&quot;) == &quot;A&quot;).then(pl.lit(&quot;H&quot;))
+        .otherwise(pl.lit(&quot;D&quot;)).alias(&quot;result&quot;),
+        pl.when(pl.col(&quot;target&quot;) == &quot;W&quot;).then(pl.lit(&quot;L&quot;))
+        .when(pl.col(&quot;target&quot;) == &quot;L&quot;).then(pl.lit(&quot;W&quot;))
+        .otherwise(pl.lit(&quot;D&quot;)).alias(&quot;target&quot;),
+        (pl.col(&quot;match_id&quot;) + pl.lit(&quot;:mirror&quot;)).alias(&quot;match_id&quot;),
+    )
+    return mirror.select(final.columns)
+
+
+def process_data(self, input_tables: dict[str, pl.DataFrame]) -&gt; pl.DataFrame:
+    matches = input_tables[&quot;matches&quot;]
+    xi = input_tables[&quot;xi&quot;]
+
+    # scope_id no XI: league_id (clube) ou sentinela (seleção).
+    xi = xi.with_columns(
+        pl.when(pl.col(&quot;team_type&quot;) == &quot;club&quot;)
+        .then(pl.col(&quot;league_id&quot;))
+        .otherwise(pl.lit(_NATION_SCOPE))
+        .cast(pl.Int64)
+        .alias(&quot;scope_id&quot;)
+    )
+
+    # 1) Resolve o team_key do FIFA p/ cada (partida, lado).
+    crosswalk = _resolve_crosswalk(matches, xi)
+
+    # 2) Liga ao XI → uma linha por (partida, lado, jogador titular).
+    resolved = crosswalk.filter(pl.col(&quot;team_key&quot;).is_not_null()).join(
+        xi.select(
+            &quot;snapshot_date&quot;, &quot;scope_id&quot;, &quot;team_key&quot;, &quot;slot&quot;, &quot;position&quot;, &quot;sector&quot;,
+            &quot;player_name&quot;, &quot;squad_source&quot;, *FIFA_PLAYER_ATTRS,
+        ),
+        on=[&quot;snapshot_date&quot;, &quot;scope_id&quot;, &quot;team_key&quot;],
+        how=&quot;inner&quot;,
+    )
+
+    # 3) Pivota titulares + agregados p/ 1 linha por partida.
+    players_wide = resolved.group_by(&quot;match_id&quot;).agg(
+        _player_slot_exprs() + _side_aggregate_exprs()
+    )
+
+    # 4) Flags de casamento por lado (a partir do crosswalk).
+    matched = (
+        crosswalk.with_columns(pl.col(&quot;team_key&quot;).is_not_null().alias(&quot;_m&quot;))
+        .group_by(&quot;match_id&quot;)
+        .agg(
+            pl.col(&quot;_m&quot;).filter(pl.col(&quot;side&quot;) == &quot;home&quot;).first().alias(&quot;home_matched&quot;),
+            pl.col(&quot;_m&quot;).filter(pl.col(&quot;side&quot;) == &quot;away&quot;).first().alias(&quot;away_matched&quot;),
+        )
+    )
+
+    # 5) Base de identificação + alvos.
+    base = matches.select(
+        &quot;match_id&quot;, &quot;match_date&quot;, &quot;snapshot_date&quot;, &quot;competition_code&quot;,
+        &quot;competition_group&quot;, &quot;match_type&quot;, &quot;season&quot;,
+        &quot;home_team&quot;, &quot;away_team&quot;, &quot;home_goals&quot;, &quot;away_goals&quot;,
+        &quot;result&quot;, &quot;target&quot;, &quot;home_result&quot;, &quot;away_result&quot;,
+    )
+
+    # 6) Win streak (vitórias/10 nas últimas 10) por lado — *3*.
+    win_rate = _win_rate_features(matches)
+
+    final = (
+        base.join(matched, on=&quot;match_id&quot;, how=&quot;left&quot;)
+        .join(players_wide, on=&quot;match_id&quot;, how=&quot;left&quot;)
+        .join(win_rate, on=&quot;match_id&quot;, how=&quot;left&quot;)
+        .with_columns(
+            pl.col(&quot;home_matched&quot;).fill_null(False),
+            pl.col(&quot;away_matched&quot;).fill_null(False),
+            pl.col(&quot;home_xi_count&quot;).fill_null(0),
+            pl.col(&quot;away_xi_count&quot;).fill_null(0),
+            pl.col(&quot;home_win_rate_last10&quot;).fill_null(0.0),
+            pl.col(&quot;away_win_rate_last10&quot;).fill_null(0.0),
+        )
+    )
+
+    # 7) Augmentation: anexa o espelho (HOME↔AWAY) → tabela com o dobro de linhas.
+    final = pl.concat([final, _mirror(final)], how=&quot;vertical_relaxed&quot;)
+    return final.sort([&quot;match_date&quot;, &quot;match_id&quot;])
+</code></pre>
+        </div>
+      </div>
+
+      <h2>Lineage</h2>
+      <div class="diagram-shell">
+        <div class="mermaid">
+flowchart LR
+  %% Node declarations
+  subgraph flatfile
+    silver_fifa_team_snapshot/*.parquet(silver_fifa_team_snapshot/*.parquet)
+    silver_fifa_match_snapshot/*.parquet(silver_fifa_match_snapshot/*.parquet)
+  end
+  %% Edges
+  silver_fifa_match_snapshot/*.parquet --> gold_fifa_partidas
+  silver_fifa_team_snapshot/*.parquet --> gold_fifa_partidas
+  %% Classes for groups
+  classDef flatfile stroke:#333333,fill:#EFEFEF,stroke-width:1px,color:#0F172A;
+  class silver_fifa_team_snapshot/*.parquet,silver_fifa_match_snapshot/*.parquet flatfile
+        </div>
+      </div>
+
+      <h2>Table Schema</h2>
+      <table class="schema-table" aria-describedby="table schema">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Comment</th>
+            <th>Parent</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td>match_id</td><td>large_string</td><td></td><td>match_id</td></tr>
+<tr><td>match_date</td><td>date32[day]</td><td></td><td>flatfile_sb_partidas.match_date, flatfile_fifa_schedule.match_date, bronze_partidas.match_date, bronze_fifa_matches.match_date, silver_fifa_match_snapshot.match_date, gold_partidas_features.match_date</td></tr>
+<tr><td>snapshot_date</td><td>date32[day]</td><td></td><td>silver_fifa_team_snapshot.snapshot_date, silver_fifa_match_snapshot.snapshot_date</td></tr>
+<tr><td>competition_code</td><td>large_string</td><td></td><td>flatfile_fifa_schedule.competition_code, bronze_fifa_matches.competition_code, silver_fifa_match_snapshot.competition_code</td></tr>
+<tr><td>competition_group</td><td>large_string</td><td></td><td>flatfile_fifa_schedule.competition_group, bronze_fifa_matches.competition_group, silver_fifa_match_snapshot.competition_group</td></tr>
+<tr><td>match_type</td><td>large_string</td><td></td><td>flatfile_fifa_schedule.match_type, bronze_fifa_matches.match_type, silver_fifa_match_snapshot.match_type</td></tr>
+<tr><td>season</td><td>large_string</td><td></td><td>flatfile_sb_partidas.season, flatfile_fbref_jogadores_temporada.season, flatfile_fbref_jogadores_chutes.season, flatfile_fbref_jogadores_diversos.season, flatfile_fbref_jogadores_minutos.season, flatfile_fbref_goleiros.season, flatfile_fifa_schedule.season, bronze_partidas.season, bronze_fifa_matches.season, silver_fifa_match_snapshot.season, gold_partidas_features.season</td></tr>
+<tr><td>home_team</td><td>large_string</td><td></td><td>flatfile_sb_partidas.home_team, flatfile_fifa_schedule.home_team, bronze_partidas.home_team, bronze_fifa_matches.home_team, silver_fifa_match_snapshot.home_team, gold_partidas_features.home_team</td></tr>
+<tr><td>away_team</td><td>large_string</td><td></td><td>flatfile_sb_partidas.away_team, flatfile_fifa_schedule.away_team, bronze_partidas.away_team, bronze_fifa_matches.away_team, silver_fifa_match_snapshot.away_team, gold_partidas_features.away_team</td></tr>
+<tr><td>home_goals</td><td>int64</td><td></td><td>flatfile_fifa_schedule.home_goals, bronze_fifa_matches.home_goals, silver_fifa_match_snapshot.home_goals</td></tr>
+<tr><td>away_goals</td><td>int64</td><td></td><td>flatfile_fifa_schedule.away_goals, bronze_fifa_matches.away_goals, silver_fifa_match_snapshot.away_goals</td></tr>
+<tr><td>result</td><td>large_string</td><td></td><td>bronze_fifa_matches.result, silver_fifa_match_snapshot.result</td></tr>
+<tr><td>target</td><td>large_string</td><td></td><td>bronze_fifa_matches.target, silver_fifa_match_snapshot.target</td></tr>
+<tr><td>home_result</td><td>large_string</td><td></td><td>bronze_fifa_matches.home_result, silver_fifa_match_snapshot.home_result</td></tr>
+<tr><td>away_result</td><td>large_string</td><td></td><td>bronze_fifa_matches.away_result, silver_fifa_match_snapshot.away_result</td></tr>
+<tr><td>home_matched</td><td>bool</td><td></td><td></td></tr>
+<tr><td>away_matched</td><td>bool</td><td></td><td></td></tr>
+<tr><td>home_p01_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p01_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p01_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p01_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p02_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p02_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p02_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p03_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p03_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p03_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p04_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p04_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p04_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p05_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p05_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p05_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p06_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p06_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p06_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p07_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p07_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p07_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p08_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p08_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p08_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p09_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p09_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p09_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p10_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p10_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p10_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p11_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_p11_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_p11_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p01_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p01_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p01_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p02_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p02_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p02_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p03_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p03_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p03_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p04_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p04_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p04_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p05_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p05_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p05_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p06_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p06_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p06_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p07_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p07_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p07_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p08_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p08_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p08_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p09_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p09_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p09_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p10_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p10_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p10_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_name</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p11_position</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_p11_overall</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_potential</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_value_eur</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_age</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_pace</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_shooting</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_passing</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_dribbling</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_defending</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_p11_physic</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_count</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_potential_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_value_eur_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_age_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_pace_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_shooting_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_passing_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_dribbling_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_defending_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_physic_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_max</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_min</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_mean_GK</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_mean_DEF</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_mean_MID</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_xi_overall_mean_FWD</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_squad_source</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>home_team_avg_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_attack_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_mid_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_def_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_team_gk_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_count</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_potential_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_value_eur_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_age_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_pace_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_shooting_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_passing_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_dribbling_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_defending_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_physic_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_max</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_min</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_mean_GK</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_mean_DEF</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_mean_MID</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_xi_overall_mean_FWD</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_squad_source</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>away_team_avg_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_attack_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_mid_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_def_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_team_gk_score</td><td>double</td><td></td><td></td></tr>
+<tr><td>home_win_rate_last10</td><td>double</td><td></td><td></td></tr>
+<tr><td>away_win_rate_last10</td><td>double</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        lineColor: "#888888",
+        tertiaryColor: "#aaaaaa",
+        primaryTextColor: "#111111",
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica"
+      }
+    });
+
+    const toggleBtn = document.getElementById("job-code-toggle");
+    const copyBtn = document.getElementById("job-code-copy");
+    const codeBox = document.getElementById("job-code-box");
+
+    function setExpanded(expanded) {
+      codeBox.classList.toggle("collapsed", !expanded);
+      toggleBtn.setAttribute("aria-expanded", String(expanded));
+      toggleBtn.textContent = expanded ? "Hide full code" : "Show full code";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      setExpanded(!expanded);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const codeText = codeBox.querySelector("code").innerText;
+      try {
+        await navigator.clipboard.writeText(codeText);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+      } catch (e) {
+        copyBtn.textContent = "Press Ctrl/Cmd+C";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+      }
+    });
+
+    setExpanded(false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+# =============================================================================
+# etl_config.yaml — orquestração do pipeline (bolt_pipeliner)
+# =============================================================================
+#
+# Convenções deste projeto
+# -------------------------
+# • Bucket único `data/`: como o framework grava cada saída como um DIRETÓRIO
+#   `data/<layer>_<output_table_name>/` (com part-*.parquet) mas, na leitura
+#   entre camadas, anexa ".parquet" ao nome, referenciamos as entradas downstream
+#   por GLOB: `"<layer>_<nome>/*.parquet"`. Isso casa com o diretório real e
+#   evita mexer no framework vendorizado.
+# • Os CSVs brutos ficam em `data/raw/` e são lidos pela camada flatfile.
+# • Parâmetros de NEGÓCIO (estatísticas, janela de 18 meses, agregações) ficam em
+#   `configs/feature_config.yaml`, lido por `macros/features.py`.
+# -----------------------------------------------------------------------------
+
+configs:
+  output_location: "data"          # raiz de TODOS os datasets parquet das camadas
+  flatfile_location: "data"        # mesmo bucket (ver nota acima)
+  schema: football_analysis
+  catalog: dev_catalog
+  incremental_column: year_month
+  incremental_type: int
+  incremental_unit: 18
+  incremental_date_grain: monthly
+
+layers:
+  flatfile: etl/_flatfile
+  bronze: etl/0_bronze
+  silver: etl/1_silver
+  gold: etl/2_gold
+  diamond: etl/3_diamond
+
+# ---------------------------------------------------------------------------
+# FLATFILE — materializa os CSVs brutos como Parquet (1 dataset por arquivo).
+#   • sb_* usam o módulo genérico `ff_passthrough`.
+#   • fbref_* usam `ff_fbref` (resolve o cabeçalho de 3 linhas).
+# ---------------------------------------------------------------------------
+flatfile:
+  - module: ff_passthrough
+    description: "Partidas (StatsBomb) — CSV bruto para Parquet."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      partidas: "raw/sb_partidas.csv"
+    output_table_name: sb_partidas
+
+  - module: ff_passthrough
+    description: "Escalações (StatsBomb) — CSV bruto para Parquet."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      escalacoes: "raw/sb_escalacoes.csv"
+    output_table_name: sb_escalacoes
+
+  - module: ff_passthrough
+    description: "Estatísticas por jogador/partida (StatsBomb) — CSV bruto para Parquet."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      stats: "raw/sb_stats_jogador.csv"
+    output_table_name: sb_stats_jogador
+
+  - module: ff_passthrough
+    description: "Competições (StatsBomb) — CSV bruto para Parquet."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      competicoes: "raw/sb_competicoes.csv"
+    output_table_name: sb_competicoes
+
+  - module: ff_fbref
+    description: "FBref — estatísticas por temporada (cabeçalho de 3 linhas)."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      fbref: "raw/fbref_jogadores_temporada.csv"
+    output_table_name: fbref_jogadores_temporada
+
+  - module: ff_fbref
+    description: "FBref — chutes por temporada."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      fbref: "raw/fbref_jogadores_chutes.csv"
+    output_table_name: fbref_jogadores_chutes
+
+  - module: ff_fbref
+    description: "FBref — estatísticas diversas (cartões, faltas, etc.)."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      fbref: "raw/fbref_jogadores_diversos.csv"
+    output_table_name: fbref_jogadores_diversos
+
+  - module: ff_fbref
+    description: "FBref — minutos jogados."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      fbref: "raw/fbref_jogadores_minutos.csv"
+    output_table_name: fbref_jogadores_minutos
+
+  - module: ff_fbref
+    description: "FBref — goleiros."
+    class_name: macros.bases.ETLFlatfilePolars
+    input_tables:
+      fbref: "raw/fbref_goleiros.csv"
+    output_table_name: fbref_goleiros
+
+  # --- FIFA (dataset partida × ratings de jogador) ---
+  - module: ff_fifa_players
+    description: "FIFA — ratings de jogador (CSV gigante, lido em streaming + projeção)."
+    class_name: macros.bases.ETLFifaPlayersFlatfilePolars
+    input_tables:
+      players: "data_fifa/fifa_aggregated.csv"
+    output_table_name: fifa_players
+
+  - module: ff_passthrough
+    description: "FIFA — schedule (resultados) bruto parquet para a camada flatfile."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      schedule: "raw/fifa_matches/schedule.parquet"
+    output_table_name: fifa_schedule
+
+# ---------------------------------------------------------------------------
+# BRONZE — tabelas-base limpas/tipadas.
+# ---------------------------------------------------------------------------
+bronze:
+  - module: bronze_partidas
+    description: "Dimensão de partidas: data, year_month, placares, mando."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      partidas: "flatfile_sb_partidas/*.parquet"
+    output_table_name: partidas
+
+  - module: bronze_escalacoes
+    description: "Escalação completa: titularidade + contagem de cartões/expulsões."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      escalacoes: "flatfile_sb_escalacoes/*.parquet"
+    output_table_name: escalacoes
+
+  - module: bronze_stats_jogador
+    description: "Stats por jogador/partida + calendário, lado e player_id."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      stats: "flatfile_sb_stats_jogador/*.parquet"
+      partidas: "bronze_partidas/*.parquet"
+      escalacoes: "bronze_escalacoes/*.parquet"
+    output_table_name: stats_jogador
+
+  # --- Fonte FBref (opcional): só existe após rodar etl/sources/fetch_fbref.py.
+  #     Base TOLERANTE → se o FBref não foi baixado, saem vazias e a união abaixo
+  #     fica idêntica a só-StatsBomb (zero regressão).
+  - module: bronze_fbref_partidas
+    description: "FBref → partidas no schema canônico (tolerante a ausência)."
+    class_name: macros.bases.ETLTolerantPolars
+    input_tables:
+      schedule: "raw/fbref/schedule/*.parquet"
+    output_table_name: fbref_partidas
+
+  - module: bronze_fbref_escalacoes
+    description: "FBref → escalações no schema canônico (tolerante a ausência)."
+    class_name: macros.bases.ETLTolerantPolars
+    input_tables:
+      lineup: "raw/fbref/lineup/*.parquet"
+      summary: "raw/fbref/player_match_summary/*.parquet"
+    output_table_name: fbref_escalacoes
+
+  - module: bronze_fbref_stats_jogador
+    description: "FBref → stats por jogador/partida no schema canônico (tolerante)."
+    class_name: macros.bases.ETLTolerantPolars
+    input_tables:
+      summary: "raw/fbref/player_match_summary/*.parquet"
+      schedule: "raw/fbref/schedule/*.parquet"
+      lineup: "raw/fbref/lineup/*.parquet"
+    output_table_name: fbref_stats_jogador
+
+  # --- União das fontes (StatsBomb + FBref) → tabelas canônicas finais da bronze.
+  - module: bronze_union
+    description: "União de partidas (StatsBomb + FBref)."
+    class_name: macros.bases.ETLTolerantPolars
+    input_tables:
+      sb: "bronze_partidas/*.parquet"
+      fbref: "bronze_fbref_partidas/*.parquet"
+    output_table_name: all_partidas
+
+  - module: bronze_union
+    description: "União de escalações (StatsBomb + FBref)."
+    class_name: macros.bases.ETLTolerantPolars
+    input_tables:
+      sb: "bronze_escalacoes/*.parquet"
+      fbref: "bronze_fbref_escalacoes/*.parquet"
+    output_table_name: all_escalacoes
+
+  - module: bronze_union
+    description: "União de stats por jogador/partida (StatsBomb + FBref)."
+    class_name: macros.bases.ETLTolerantPolars
+    input_tables:
+      sb: "bronze_stats_jogador/*.parquet"
+      fbref: "bronze_fbref_stats_jogador/*.parquet"
+    output_table_name: all_stats_jogador
+
+  # --- FIFA: jogadores (tipados) e partidas (resultados) limpos.
+  - module: bronze_fifa_players
+    description: "FIFA → ratings de jogador por snapshot, tipados + chaves de time."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      players: "flatfile_fifa_players/*.parquet"
+    output_table_name: fifa_players
+
+  - module: bronze_fifa_matches
+    description: "FIFA → resultados de partida limpos (result/target + chaves de time)."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      schedule: "flatfile_fifa_schedule/*.parquet"
+    output_table_name: fifa_matches
+
+# ---------------------------------------------------------------------------
+# SILVER — agregados mensais parametrizáveis (feature_config.yaml).
+#   Leem a UNIÃO das fontes (bronze_all_*), agnósticas da origem.
+# ---------------------------------------------------------------------------
+silver:
+  - module: silver_jogador_year_month
+    description: "Estatísticas agregadas por jogador × year_month (elenco inteiro)."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      stats: "bronze_all_stats_jogador/*.parquet"
+    output_table_name: jogador_year_month
+
+  - module: silver_time_year_month
+    description: "Estatísticas agregadas por time × year_month (totais por partida)."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      stats: "bronze_all_stats_jogador/*.parquet"
+    output_table_name: time_year_month
+
+  # --- Silvers DEFENSIVAS: gols/xG sofridos (baseline do time e com o jogador).
+  - module: silver_time_defensivo
+    description: "Gols/xG sofridos por time × year_month (baseline defensiva)."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      stats: "bronze_all_stats_jogador/*.parquet"
+      partidas: "bronze_all_partidas/*.parquet"
+    output_table_name: time_defensivo
+
+  - module: silver_jogador_defensivo
+    description: "Gols/xG sofridos pelo time COM o jogador titular × year_month."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      stats: "bronze_all_stats_jogador/*.parquet"
+      partidas: "bronze_all_partidas/*.parquet"
+    output_table_name: jogador_defensivo
+
+  # --- FIFA: XI titular por (snapshot, time) e partida × snapshot vigente.
+  - module: silver_fifa_team_snapshot
+    description: "FIFA → XI titular de cada time em cada snapshot (formato longo)."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      players: "bronze_fifa_players/*.parquet"
+    output_table_name: fifa_team_snapshot
+
+  - module: silver_fifa_match_snapshot
+    description: "FIFA → cada partida com o snapshot do FIFA vigente (as-of join)."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      matches: "bronze_fifa_matches/*.parquet"
+      players: "bronze_fifa_players/*.parquet"
+    output_table_name: fifa_match_snapshot
+
+# ---------------------------------------------------------------------------
+# GOLD — tabela final orientada a partidas (features 18m + targets).
+# ---------------------------------------------------------------------------
+gold:
+  - module: gold_partidas_features
+    description: "1 linha por partida: features de forma (18m) + colunas target."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      partidas: "bronze_all_partidas/*.parquet"
+      escalacoes: "bronze_all_escalacoes/*.parquet"
+      stats: "bronze_all_stats_jogador/*.parquet"
+      silver_time: "silver_time_year_month/*.parquet"
+      silver_jogador: "silver_jogador_year_month/*.parquet"
+      silver_time_def: "silver_time_defensivo/*.parquet"
+      silver_jogador_def: "silver_jogador_defensivo/*.parquet"
+    output_table_name: partidas_features
+
+  # --- FIFA: dataset wide (1 linha por partida × XI dos dois lados + agregados).
+  - module: gold_fifa_partidas
+    description: "FIFA → 1 linha por partida: 11 titulares de cada lado + score agregado + alvos."
+    class_name: ETLBaseParquetPolars
+    input_tables:
+      matches: "silver_fifa_match_snapshot/*.parquet"
+      xi: "silver_fifa_team_snapshot/*.parquet"
+    output_table_name: fifa_partidas
+
+# ---------------------------------------------------------------------------
+# DIAMOND — vazia por opção: TODA a saída (features + targets + versões `_q`
+# normalizadas por fonte) está consolidada na GOLD `gold_partidas_features`.
+# (A normalização rank/quantil foi movida para o job do gold.)
+# ---------------------------------------------------------------------------
+diamond: []

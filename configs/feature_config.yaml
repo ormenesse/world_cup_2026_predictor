@@ -1,0 +1,99 @@
+# =============================================================================
+# feature_config.yaml — parametrização das features do pipeline de futebol
+# =============================================================================
+#
+# Este arquivo centraliza TODOS os parâmetros "de negócio" do pipeline. A ideia
+# é que, para mudar o comportamento (janela temporal, quais estatísticas entram
+# nas médias, quais agregações são calculadas), você edite SÓ este YAML — nenhum
+# código Python precisa ser tocado. Ele é lido por `macros/features.py`, que por
+# sua vez é importado pelas camadas silver e gold.
+#
+# Por que aqui e não em etl_config.yaml? O `etl_config.yaml` é consumido pelo
+# runner do bolt_pipeliner, que só repassa um conjunto fixo de chaves para os
+# jobs. Um arquivo separado nos dá liberdade total de parametrização sem brigar
+# com o contrato do runner.
+# -----------------------------------------------------------------------------
+
+# Janela móvel (em meses) usada para calcular as médias históricas de cada
+# jogador e de cada time ANTES de cada partida. 18 = um ano e meio.
+rolling_window_months: 18
+
+# ---------------------------------------------------------------------------
+# Estatísticas por jogador/partida (colunas de sb_stats_jogador) que serão
+# agregadas nas camadas silver. Adicione/remova itens livremente: as silvers
+# (jogador×year_month e time×year_month) e a gold se adaptam automaticamente.
+#
+# Todas precisam ser colunas numéricas existentes em sb_stats_jogador.csv.
+# ---------------------------------------------------------------------------
+player_match_stats:
+  - gols                 # gols marcados
+  - assistencias         # assistências
+  - chutes_no_alvo       # chutes no alvo (shots on target)
+  - xg_total             # expected goals acumulado
+  - passes_completos     # passes completos
+  - key_passes           # passes-chave (criação de chance)
+  - ev_shot              # eventos de finalização (total de chutes)
+  - ev_pass              # eventos de passe
+  - ev_foul_committed    # faltas cometidas
+  - ev_foul_won          # faltas sofridas
+  - ev_interception      # interceptações
+  - ev_ball_recovery     # recuperações de bola
+  - ev_dribble           # dribles
+  - ev_duel              # duelos
+  - ev_pressure          # pressões
+  - ev_block             # bloqueios
+  - ev_clearance         # cortes/afastamentos
+  - ev_dispossessed      # vezes desarmado
+  - ev_miscontrol        # domínios errados
+  # Índices defensivos DERIVADOS (calculados na bronze a partir dos eventos):
+  - def_acoes            # volume de ações defensivas (int+block+clear+recov+duel)
+  - def_erros            # ações que favorecem o adversário (erro+driblado+OG+falta)
+
+# ---------------------------------------------------------------------------
+# Agregações calculadas para CADA estatística acima, por grupo (jogador×mês e
+# time×mês). Suportadas: "mean", "sum", "median", "max", "min", "std".
+#
+# IMPORTANTE: independentemente desta lista, as silvers SEMPRE gravam também a
+# soma (`*_sum`) e a contagem de partidas (`n_partidas`). Isso é necessário
+# porque a média móvel de 18 meses na gold é uma média PONDERADA por número de
+# partidas — combinar médias mensais simples daria peso errado a meses com
+# poucos jogos. Guardando soma + contagem por mês, a gold reconstrói a média
+# verdadeira da janela como Σsoma / Σpartidas.
+# ---------------------------------------------------------------------------
+aggregations:
+  - mean
+  - sum
+
+# ---------------------------------------------------------------------------
+# Percentis (além das médias) para as variáveis MAIS IMPORTANTES.
+#
+# Diferença crucial em relação à média: o percentil NÃO é reconstrutível a
+# partir de soma/contagem mensal — ele depende da distribuição partida a partida.
+# Por isso a gold calcula estes percentis direto sobre os valores POR PARTIDA
+# dentro da janela de `rolling_window_months` (e não a partir das silvers).
+#
+# • `percentiles`       — quantis a calcular (0.75 = percentil 75).
+# • `percentile_stats`  — subconjunto de estatísticas para as quais vale a pena
+#                         o custo extra (idealmente as mais informativas).
+# ---------------------------------------------------------------------------
+percentiles:
+  - 0.75
+
+percentile_stats:
+  - gols
+  - chutes_no_alvo
+  - xg_total
+  - key_passes
+  - ev_shot
+  - ev_pass
+
+# ---------------------------------------------------------------------------
+# Grupos de posição (setor) usados para agregar as features dos titulares por
+# linha do time (ataque) e para avaliar zagueiros/meio-campistas. Derivados das
+# posições do StatsBomb/FBref na bronze (coluna position_group).
+# ---------------------------------------------------------------------------
+position_groups:
+  - GK
+  - DEF
+  - MID
+  - FWD

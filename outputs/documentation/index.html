@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tables Index</title>
+  <style>
+    :root {
+      --accent: #e31837;
+      --accent-hover: #b8122d;
+      --text: #1a1a1a;
+      --page-bg: #ffffff;
+      --panel-bg: #f7f7f7;
+      --border: #e5e5e5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text); background: var(--page-bg);
+    }
+    .layout { display: grid; grid-template-columns: 20vw 1fr; min-height: 100vh; }
+    aside {
+      border-right: 1px solid var(--border); background: var(--panel-bg); padding: 16px 12px; position: sticky; top:0; height: 100dvh; overflow:auto;
+    }
+    header.logo-wrap { display:flex; flex-direction: column; align-items:center; gap:12px; padding: 4px 6px 12px; border-bottom:1px solid var(--border); margin-bottom:12px; }
+    .logo { width: 10vw; height:auto; }
+    .logo-text { font-weight: 700; color: var(--accent); }
+    .search { width: 100%; margin: 8px 0 12px; }
+    .search input {
+      width: 100%; padding: 8px 10px; border:1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    nav ul { list-style:none; margin:0; padding:0; }
+    nav li a {
+      display:block; padding:8px 10px; border-radius:8px; color: var(--text); text-decoration:none;
+    }
+    nav li a:hover { background: #fde7ea; }
+    nav li a.active { background: var(--accent); color:#fff; }
+    main { padding: 0; }
+    .toolbar {
+      display:flex; gap:8px; align-items:center; justify-content: space-between;
+      border-bottom:1px solid var(--border); padding:10px 12px; background:#fff;
+    }
+    .toolbar .btn {
+      appearance:none; background: var(--accent); color:#fff; border:none; border-radius:8px; padding:6px 10px; cursor:pointer; font-size: 13px;
+    }
+    .toolbar .btn:hover { background: var(--accent-hover); }
+    .viewer { height: calc(100vh); width: 100%; border: none; display:block; }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; height: auto; }
+      .viewer { height: 70vh; }
+    }
+    aside nav { font-size: 12px; }
+    nav li a { padding: 6px 8px; line-height: 1.25; }
+    .footnote {
+      padding: 8px 12px 14px;
+      font-size: 11px;
+      color: #64748b;
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <header class="logo-wrap">
+        <div class="Menu">
+          <img src="logo.png" alt="Logo" class="logo"/>
+        </div>
+        <div class="logo-text">Documentation</div>
+      </header>
+      <div class="search">
+        <input id="filter" type="search" placeholder="Filter tables…" />
+      </div>
+      <nav>
+        <ul id="list">
+          <li><a href="etlBase" data-file="./tables/etlBase.html">ETLBASE</a></li>
+<li><a href="flatfile_sb_partidas" data-file="./tables/flatfile_sb_partidas.html">FLATFILE SB PARTIDAS</a></li>
+<li><a href="flatfile_sb_escalacoes" data-file="./tables/flatfile_sb_escalacoes.html">FLATFILE SB ESCALACOES</a></li>
+<li><a href="flatfile_sb_stats_jogador" data-file="./tables/flatfile_sb_stats_jogador.html">FLATFILE SB STATS JOGADOR</a></li>
+<li><a href="flatfile_sb_competicoes" data-file="./tables/flatfile_sb_competicoes.html">FLATFILE SB COMPETICOES</a></li>
+<li><a href="flatfile_fbref_jogadores_temporada" data-file="./tables/flatfile_fbref_jogadores_temporada.html">FLATFILE FBREF JOGADORES TEMPORADA</a></li>
+<li><a href="flatfile_fbref_jogadores_chutes" data-file="./tables/flatfile_fbref_jogadores_chutes.html">FLATFILE FBREF JOGADORES CHUTES</a></li>
+<li><a href="flatfile_fbref_jogadores_diversos" data-file="./tables/flatfile_fbref_jogadores_diversos.html">FLATFILE FBREF JOGADORES DIVERSOS</a></li>
+<li><a href="flatfile_fbref_jogadores_minutos" data-file="./tables/flatfile_fbref_jogadores_minutos.html">FLATFILE FBREF JOGADORES MINUTOS</a></li>
+<li><a href="flatfile_fbref_goleiros" data-file="./tables/flatfile_fbref_goleiros.html">FLATFILE FBREF GOLEIROS</a></li>
+<li><a href="flatfile_fifa_players" data-file="./tables/flatfile_fifa_players.html">FLATFILE FIFA PLAYERS</a></li>
+<li><a href="flatfile_fifa_schedule" data-file="./tables/flatfile_fifa_schedule.html">FLATFILE FIFA SCHEDULE</a></li>
+<li><a href="bronze_partidas" data-file="./tables/bronze_partidas.html">BRONZE PARTIDAS</a></li>
+<li><a href="bronze_escalacoes" data-file="./tables/bronze_escalacoes.html">BRONZE ESCALACOES</a></li>
+<li><a href="bronze_fbref_partidas" data-file="./tables/bronze_fbref_partidas.html">BRONZE FBREF PARTIDAS</a></li>
+<li><a href="bronze_fbref_escalacoes" data-file="./tables/bronze_fbref_escalacoes.html">BRONZE FBREF ESCALACOES</a></li>
+<li><a href="bronze_fbref_stats_jogador" data-file="./tables/bronze_fbref_stats_jogador.html">BRONZE FBREF STATS JOGADOR</a></li>
+<li><a href="bronze_fifa_players" data-file="./tables/bronze_fifa_players.html">BRONZE FIFA PLAYERS</a></li>
+<li><a href="bronze_fifa_matches" data-file="./tables/bronze_fifa_matches.html">BRONZE FIFA MATCHES</a></li>
+<li><a href="silver_jogador_year_month" data-file="./tables/silver_jogador_year_month.html">SILVER JOGADOR YEAR MONTH</a></li>
+<li><a href="silver_time_year_month" data-file="./tables/silver_time_year_month.html">SILVER TIME YEAR MONTH</a></li>
+<li><a href="silver_time_defensivo" data-file="./tables/silver_time_defensivo.html">SILVER TIME DEFENSIVO</a></li>
+<li><a href="silver_jogador_defensivo" data-file="./tables/silver_jogador_defensivo.html">SILVER JOGADOR DEFENSIVO</a></li>
+<li><a href="silver_fifa_team_snapshot" data-file="./tables/silver_fifa_team_snapshot.html">SILVER FIFA TEAM SNAPSHOT</a></li>
+<li><a href="silver_fifa_match_snapshot" data-file="./tables/silver_fifa_match_snapshot.html">SILVER FIFA MATCH SNAPSHOT</a></li>
+<li><a href="gold_partidas_features" data-file="./tables/gold_partidas_features.html">GOLD PARTIDAS FEATURES</a></li>
+<li><a href="gold_fifa_partidas" data-file="./tables/gold_fifa_partidas.html">GOLD FIFA PARTIDAS</a></li>
+        </ul>
+      </nav>
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </aside>
+    <main>
+      <!-- <div class="toolbar">
+        <div id="current-title">Select a table</div>
+        <div>
+          <a id="open-new" class="btn" href="#" target="_blank" rel="noreferrer">Open in new tab</a>
+        </div>
+      </div> -->
+      <iframe id="viewer" class="viewer" src=""></iframe>
+    </main>
+  </div>
+  <script>
+    const listEl = document.getElementById('list');
+    const viewer = document.getElementById('viewer');
+    const currentTitle = document.getElementById('current-title');
+    const openNew = document.getElementById('open-new');
+    const filterInput = document.getElementById('filter');
+
+    function setActive(link) {
+      for (const a of listEl.querySelectorAll('a')) a.classList.remove('active');
+      if (link) link.classList.add('active');
+    }
+
+    function load(file, linkEl) {
+      viewer.src = file;
+      openNew.href = file;
+      if (linkEl) {
+        currentTitle.textContent = linkEl.textContent.trim();
+      }
+      history.replaceState(null, '', '#' + encodeURIComponent(file));
+      setActive(linkEl);
+    }
+
+    listEl.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-file]');
+      if (!a) return;
+      e.preventDefault();
+      load(a.getAttribute('data-file'), a);
+    });
+
+    // Filter
+    filterInput.addEventListener('input', () => {
+      const q = filterInput.value.toLowerCase();
+      for (const li of listEl.querySelectorAll('li')) {
+        const a = li.querySelector('a');
+        li.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+      }
+    });
+
+    // On load: hash route or first item
+    window.addEventListener('DOMContentLoaded', () => {
+      const links = Array.from(listEl.querySelectorAll('a[data-file]'));
+      if (links.length === 0) return;
+      const fromHash = decodeURIComponent(location.hash.replace(/^#/, ''));
+      const match = links.find(a => a.getAttribute('data-file') === fromHash);
+      load((match || links[0]).getAttribute('data-file'), match || links[0]);
+    });
+  </script>
+</body>
+</html>

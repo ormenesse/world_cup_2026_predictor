@@ -1,0 +1,94 @@
+# =============================================================================
+# fifa_match_sources.yaml — competições cujos RESULTADOS de partida cruzamos com
+# os ratings de jogador do FIFA (data/data_fifa/fifa_aggregated.csv).
+# =============================================================================
+#
+# Consumido por:
+#   • etl/sources/fetch_fifa_matches.py  → baixa os SCHEDULES (datas + placar) via
+#       FBref/soccerdata (API HTTP, sem Selenium) e grava em
+#       data/raw/fifa_matches/schedule.parquet.
+#   • Pipeline FIFA (camadas bronze/silver/gold em etl/, orquestrado por
+#       configs/etl_config.yaml) → junta cada partida ao snapshot do FIFA mais
+#       recente ANTES da data do jogo e monta o dataset wide (11 titulares por
+#       lado + score agregado do time) em data/gold_fifa_partidas/. Lógica
+#       compartilhada em macros/fifa.py.
+#
+# Só precisamos do SCHEDULE (1 requisição por liga-temporada → leve). Os
+# "jogadores principais" de cada time vêm do PRÓPRIO FIFA (XI titular da edição
+# vigente), então NÃO baixamos escalações/eventos por partida.
+#
+# `type`:
+#   club   → casa/fora são clubes; casa o nome do time ao club_name do FIFA,
+#            restrito aos league_id abaixo.
+#   nation → casa/fora são seleções; casa pela nationality do FIFA (XI da seleção).
+#
+# `fifa_league_ids`: quais league_id do fifa_aggregated.csv formam o pool de
+#   clubes candidatos (resolve a colisão "Serie A" Itália=31 vs Brasil=7).
+# -----------------------------------------------------------------------------
+
+# Onde o fetcher grava o schedule bruto consolidado.
+raw_output_dir: "data/raw/fifa_matches"
+
+# Só consideramos partidas a partir desta data (FIFA tem dados de 2014/15+).
+min_match_date: "2015-01-01"
+
+competitions:
+  # --- Copa do Mundo (seleções) ---
+  - code: "INT-World Cup"
+    group: "world_cup"
+    type: "nation"
+    seasons: ["2018", "2022"]
+
+  # --- Amistosos de seleções (injetado no league_dict do soccerdata) ---
+  # Pode não ser suportado pelo parser do FBref/soccerdata; o fetcher PULA com
+  # aviso se falhar. fbref_name = nome EXATO da competição no FBref.
+  - code: "INT-Friendlies"
+    group: "national_friendly"
+    type: "nation"
+    fbref_name: "Friendlies (M)"
+    single_year: true
+    seasons: ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]
+
+  # --- Itália A/B (temporada cruzada Ago–Mai) ---
+  - code: "ITA-Serie A"
+    group: "italy_a"
+    type: "club"
+    fifa_league_ids: [31]
+    seasons: ["2015-2016", "2016-2017", "2017-2018", "2018-2019", "2019-2020", "2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"]
+  - code: "ITA-Serie B"
+    group: "italy_b"
+    type: "club"
+    fifa_league_ids: [32]
+    seasons: ["2015-2016", "2016-2017", "2017-2018", "2018-2019", "2019-2020", "2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"]
+
+  # --- Alemanha A/B ---
+  - code: "GER-Bundesliga"
+    group: "germany_a"
+    type: "club"
+    fifa_league_ids: [19]
+    seasons: ["2015-2016", "2016-2017", "2017-2018", "2018-2019", "2019-2020", "2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"]
+  - code: "GER-2. Bundesliga"
+    group: "germany_b"
+    type: "club"
+    fifa_league_ids: [20]
+    seasons: ["2015-2016", "2016-2017", "2017-2018", "2018-2019", "2019-2020", "2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"]
+
+  # --- Espanha A/B ---
+  - code: "ESP-La Liga"
+    group: "spain_a"
+    type: "club"
+    fifa_league_ids: [53]
+    seasons: ["2015-2016", "2016-2017", "2017-2018", "2018-2019", "2019-2020", "2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"]
+  - code: "ESP-Segunda"
+    group: "spain_b"
+    type: "club"
+    fifa_league_ids: [54]
+    seasons: ["2015-2016", "2016-2017", "2017-2018", "2018-2019", "2019-2020", "2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"]
+
+  # --- Brasil A (ano-calendário) ---
+  - code: "BRA-Serie A"
+    group: "brazil_a"
+    type: "club"
+    fifa_league_ids: [7]
+    single_year: true
+    seasons: ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"]

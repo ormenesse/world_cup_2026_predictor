@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>etl_base</title>
+  <style>
+    :root {
+      --bg: #353535ff;
+      --text: #500b3aff;
+      --panel: #f7f7f7;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,.35);
+      --accent: #d54e62ff;
+      --rule: #1f2937;
+      --muted: #94a3b8;
+      --cell: #555555;
+      --link: #60a5fa;
+      --btn: #d54e62ff;
+      --btn-text: #fff;
+      --btn-hover: #b8122d;
+      --code-bg: #353535ff;
+      --code-border: #353535ff;
+      --code-inset: rgba(255,255,255,.03);
+      --fade-top: rgba(11,16,33,0);
+      --fade-mid: rgba(11,16,33,.9);
+      --fade-bottom: rgba(11,16,33,1);
+      --mermaid-text: #111111;
+      --mermaid-line: #888888;
+      --mermaid-tertiary: #aaaaaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -130px;
+      right: -80px;
+      width: 280px;
+      height: 280px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--mermaid-tertiary) 0%, transparent 70%);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--accent);
+    }
+
+    .chip {
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 2px;
+    }
+
+    .info-table,
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: var(--panel);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .info-table th,
+    .info-table td,
+    .schema-table th,
+    .schema-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td,
+    .schema-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .info-table th {
+      width: 240px;
+      color: var(--accent);
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .info-table td,
+    .schema-table td { color: var(--cell); }
+
+    .schema-table thead th {
+      color: var(--accent);
+      background: var(--panel);
+      font-weight: 700;
+    }
+
+    .code-wrap { position: relative; }
+
+    .code-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .code-toolbar .btn {
+      appearance: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .code-toolbar .btn:hover { background: var(--btn-hover); }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height .25s ease;
+      box-shadow: inset 0 1px 0 var(--code-inset);
+    }
+
+    .code-box.collapsed { max-height: 220px; }
+
+    .code-box.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 54px;
+      background: linear-gradient(180deg, var(--fade-top) 0%, var(--fade-mid) 90%, var(--fade-bottom) 100%);
+      pointer-events: none;
+    }
+
+    pre { margin: 0; }
+
+    pre code.hljs {
+      background: var(--code-bg) !important;
+      white-space: pre-wrap !important;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .kv {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: var(--rule);
+    }
+
+    .mermaid-shell {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      overflow: auto;
+    }
+
+    .mermaid { min-width: 720px; }
+
+    .mermaid svg path,
+    .mermaid svg line,
+    .mermaid svg rect,
+    .mermaid svg polygon,
+    .mermaid svg text { fill: var(--mermaid-text); }
+
+    ul { margin: 0; padding-left: 18px; }
+    li { margin: 5px 0; }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .footnote {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .panel { padding: 14px; }
+      .info-table th { width: 180px; }
+      .mermaid { min-width: 620px; }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="title-row">
+        <h1>ETLBase (Spark + Iceberg)</h1>
+        <span class="chip">Reference</span>
+      </div>
+      <div class="meta">Generated 2026-06-15 21:24:06 (-03)</div>
+
+      <table class="info-table" aria-describedby="etl-base metadata">
+        <tbody>
+          <tr>
+            <th>Description</th>
+            <td>
+              Base ETL class for Spark + Iceberg (Glue). Defines read/write conventions,
+              generic incremental-policy behavior, and the orchestration flow via
+              <span class="kv">run()</span>.
+            </td>
+          </tr>
+          <tr><th>Module</th><td><span class="kv">bolt_pipeliner.bases.spark_iceberg.ETLBase</span></td></tr>
+          <tr><th>Module Path</th><td><pre>/Users/ormenessevinicius/Library/CloudStorage/OneDrive-TheBostonConsultingGroup,Inc/Documents/GitHub/analise_times/football_analysis/_boltpipeliner/bolt_pipeliner/bases/spark_iceberg.py</pre></td></tr>
+          <tr><th>FIXED_SCHEMA</th><td><code class="kv">football_analysis</code></td></tr>
+          <tr><th>Read Catalog (bronze)</th><td><code class="kv">shared_catalog</code></td></tr>
+          <tr><th>Write Catalog</th><td><code class="kv">dev_catalog</code></td></tr>
+          <tr><th>Iceberg Identifier</th><td><span class="kv">dev_catalog.football_analysis.<layer>_<output_table_name></span></td></tr>
+          <tr>
+            <th>Key Parameters</th>
+            <td>
+              <div class="kv">
+                (spark, layer, bucket, input_tables, output_table_name, partition_by=None,
+                unload=True, incremental=True, catalog, save_catalog, fixed_schema,
+                incremental_column, incremental_type, incremental_unit,
+                incremental_date_grain, **kwargs)
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>Code (spark_iceberg.py)</th>
+            <td>
+              <div class="code-wrap" id="base-code-wrap">
+                <div class="code-toolbar">
+                  <button class="btn" id="base-code-toggle" aria-expanded="false" aria-controls="base-code-box">Show full code</button>
+                  <button class="btn" id="base-code-copy">Copy</button>
+                </div>
+                <div class="code-box collapsed" id="base-code-box">
+<pre><code class="language-python">
+import logging
+
+from pyspark.sql import functions as F
+
+from bolt_pipeliner.bases._incremental import (
+    build_incremental_policy,
+    incremental_values_desc,
+)
+from bolt_pipeliner.bases._io import detect_file_format, resolve_data_path, to_pandas_path, to_spark_path
+
+logging.basicConfig(level=logging.INFO)
+
+
+class ETLBase:
+    &quot;&quot;&quot;
+    ETL base for Spark + Iceberg (Glue).
+    Rules:
+      - flatfile: read CSV/Parquet/Excel/JSON from &lt;bucket&gt;/&lt;path&gt;
+      - bronze: DO NOT CHANGE (SQL from self.catalog as in original)
+      - else: read Iceberg from save_catalog.&lt;fixed_schema&gt;.&lt;table&gt;
+      - writes: save_catalog.&lt;fixed_schema&gt;.&lt;layer&gt;_&lt;output_table_name&gt;
+    &quot;&quot;&quot;
+
+    DEFAULT_FIXED_SCHEMA = &quot;cxdw_dm&quot;
+    DEFAULT_INCREMENTAL_COLUMN = &quot;year_month&quot;
+    DEFAULT_INCREMENTAL_TYPE = &quot;int&quot;
+    DEFAULT_INCREMENTAL_UNIT = 3
+    DEFAULT_INCREMENTAL_DATE_GRAIN = &quot;monthly&quot;
+
+    def __init__(
+        self,
+        spark,
+        layer,
+        bucket,
+        input_tables,
+        output_table_name,
+        partition_by=None,
+        unload=True,
+        incremental=True,
+        catalog=&quot;shared_catalog&quot;,
+        save_catalog=&quot;dev_catalog&quot;,
+        fixed_schema=None,
+        incremental_column=None,
+        incremental_type=None,
+        incremental_unit=None,
+        incremental_date_grain=None,
+        **kwargs,
+    ):
+        self.spark = spark
+        self.layer = layer
+        self.bucket = bucket
+        self.input_table_names = input_tables or {}
+        self.input_tables = {}
+        self.catalog = catalog
+        self.save_catalog = save_catalog
+        self.partition_by = partition_by
+        self.unload = unload
+        self.incremental = incremental
+        self.df = None
+        self.year_months = None  # Backward-compat alias.
+        self.output_table_name = output_table_name
+        self.fixed_schema = fixed_schema or self.DEFAULT_FIXED_SCHEMA
+        self.incremental_policy = build_incremental_policy(
+            enabled=incremental,
+            column=incremental_column or self.DEFAULT_INCREMENTAL_COLUMN,
+            unit=incremental_unit,
+            value_type=incremental_type,
+            date_grain=incremental_date_grain,
+            default_window=self.DEFAULT_INCREMENTAL_UNIT,
+            default_value_type=self.DEFAULT_INCREMENTAL_TYPE,
+            default_date_grain=self.DEFAULT_INCREMENTAL_DATE_GRAIN,
+        )
+        self.incremental_column = self.incremental_policy.column
+        self.iceberg_table = f&quot;{self.save_catalog}.{self.fixed_schema}.{self.layer}_{self.output_table_name}&quot;
+        self.logging_string = f&quot;{self.layer} {self.output_table_name}&quot;
+        self.table_exists = self._table_exists(self.iceberg_table)
+
+    def _read_excel(self, path: str):
+        import pandas as pd
+
+        excel_path = to_pandas_path(path)
+        pdf = pd.read_excel(excel_path)
+        return self.spark.createDataFrame(pdf)
+
+    def _read_flatfile_source(self, source: str):
+        path = to_spark_path(resolve_data_path(source, self.bucket))
+        file_format = detect_file_format(path)
+
+        if file_format == &quot;csv&quot;:
+            return self.spark.read.csv(
+                path,
+                header=True,
+                inferSchema=True,
+                multiLine=True,
+                escape=&#x27;&quot;&#x27;,
+                quote=&#x27;&quot;&#x27;,
+            )
+        if file_format == &quot;parquet&quot;:
+            return self.spark.read.parquet(path)
+        if file_format == &quot;json&quot;:
+            return self.spark.read.option(&quot;multiLine&quot;, True).json(path)
+        if file_format == &quot;jsonl&quot;:
+            return self.spark.read.json(path)
+        if file_format == &quot;excel&quot;:
+            return self._read_excel(path)
+
+        raise ValueError(
+            f&quot;Unsupported input format for &#x27;{source}&#x27;. Supported flatfile formats: &quot;
+            &quot;.csv, .parquet, .xlsx/.xls, .json, .jsonl/.ndjson.&quot;
+        )
+
+    @property
+    def FIXED_SCHEMA(self):
+        &quot;&quot;&quot;Back-compat alias; prefer `self.fixed_schema`.&quot;&quot;&quot;
+        return self.fixed_schema
+
+    def _table_exists(self, table_ident: str) -&gt; bool:
+        try:
+            return self.spark.catalog.tableExists(table_ident)
+        except Exception:
+            return False
+
+    def _ensure_namespace(self, catalog: str, schema: str):
+        self.spark.sql(f&quot;CREATE NAMESPACE IF NOT EXISTS {catalog}.{schema}&quot;)
+
+    def check_if_tables_exists_find_yearmonths(self):
+        # Keep method name for API compatibility.
+        self.year_months = None
+
+    def _normalize_incremental_df(self, df, *, frame_name: str):
+        marker = &quot;__bp_incremental_value&quot;
+        if self.incremental_column not in df.columns:
+            raise ValueError(
+                f&quot;Incremental column &#x27;{self.incremental_column}&#x27; not found in {frame_name}.&quot;
+            )
+
+        if self.incremental_policy.value_type == &quot;int&quot;:
+            source = F.col(self.incremental_column)
+            normalized = source.cast(&quot;long&quot;)
+            numeric = source.cast(&quot;double&quot;)
+            invalid_condition = source.isNotNull() &amp; (
+                normalized.isNull() | (numeric != normalized.cast(&quot;double&quot;))
+            )
+        else:
+            normalized = F.to_date(F.col(self.incremental_column))
+            invalid_condition = (
+                F.col(self.incremental_column).isNotNull() &amp; normalized.isNull()
+            )
+
+        out = df.withColumn(marker, normalized)
+        invalid = out.filter(invalid_condition).limit(1)
+        if invalid.count() &gt; 0:
+            raise ValueError(
+                f&quot;Incremental column &#x27;{self.incremental_column}&#x27; in {frame_name} has invalid &quot;
+                f&quot;{self.incremental_policy.value_type} values.&quot;
+            )
+
+        if self.incremental_policy.value_type == &quot;date&quot;:
+            if self.incremental_policy.date_grain == &quot;yearly&quot;:
+                valid_grain = (
+                    (F.month(F.col(marker)) == 1)
+                    &amp; (F.dayofmonth(F.col(marker)) == 1)
+                )
+            elif self.incremental_policy.date_grain == &quot;monthly&quot;:
+                valid_grain = F.dayofmonth(F.col(marker)) == 1
+            else:
+                valid_grain = F.lit(True)
+
+            bad = out.filter(F.col(marker).isNotNull() &amp; (~valid_grain)).limit(1)
+            if bad.count() &gt; 0:
+                raise ValueError(
+                    f&quot;Incremental column &#x27;{self.incremental_column}&#x27; in {frame_name} must follow &quot;
+                    f&quot;{self.incremental_policy.date_grain} date granularity.&quot;
+                )
+
+        return out
+
+    def _apply_incremental_policy(self, incoming_df):
+        if (not self.incremental_policy.enabled) or self.incremental_policy.mode == &quot;overwrite&quot;:
+            return incoming_df
+
+        if not self._table_exists(self.iceberg_table):
+            return incoming_df
+
+        marker = &quot;__bp_incremental_value&quot;
+        existing = self.spark.read.table(self.iceberg_table)
+        incoming_norm = self._normalize_incremental_df(incoming_df, frame_name=&quot;processed DataFrame&quot;)
+        existing_norm = self._normalize_incremental_df(existing, frame_name=&quot;existing target table&quot;)
+
+        existing_values = [
+            row[0]
+            for row in existing_norm.select(marker).where(F.col(marker).isNotNull()).distinct().collect()
+        ]
+
+        if self.incremental_policy.mode == &quot;append&quot;:
+            existing_values_df = existing_norm.select(marker).where(
+                F.col(marker).isNotNull()
+            ).distinct()
+            incoming_filtered = incoming_norm.join(existing_values_df, marker, &quot;left_anti&quot;)
+            return existing.unionByName(incoming_filtered.drop(marker), allowMissingColumns=True)
+
+        sorted_existing = incremental_values_desc(existing_values)
+        latest_values = sorted_existing[: self.incremental_policy.window_size or 0]
+        if not latest_values:
+            return incoming_df
+
+        cutoff = latest_values[-1]
+        incoming_recent = incoming_norm.filter(F.col(marker) &gt;= F.lit(cutoff)).drop(marker)
+        existing_retained = existing_norm.filter(~F.col(marker).isin(latest_values)).drop(marker)
+        return existing_retained.unionByName(incoming_recent, allowMissingColumns=True)
+
+    def load_data(self, input_path=None):
+        print(f&quot;{self.logging_string} - Loading data...&quot;)
+
+        if not self.input_table_names:
+            return
+
+        if self.layer == &quot;flatfile&quot;:
+            for key, source in self.input_table_names.items():
+                self.input_tables[key] = self._read_flatfile_source(source)
+                print(f&quot;{self.logging_string} - Loaded flatfile - {source}&quot;)
+            return
+
+        if self.layer == &quot;bronze&quot;:
+            # DO NOT CHANGE: use the original SQL against self.catalog
+            for key in self.input_table_names.keys():
+                if &quot;.&quot; in self.input_table_names[key]:
+                    self.input_tables[key] = self.spark.sql(
+                        f&quot;&quot;&quot;
+                            SELECT *
+                            FROM {self.catalog}.{self.input_table_names[key]}
+                        &quot;&quot;&quot;
+                    )
+                else:
+                    table_ident = f&quot;{self.save_catalog}.{self.fixed_schema}.{self.input_table_names[key]}&quot;
+                    self.input_tables[key] = self.spark.read.table(table_ident)
+                print(f&quot;{self.logging_string} - Loaded - {self.input_table_names[key]}&quot;)
+            return
+
+        for key, name in self.input_table_names.items():
+            table_ident = f&quot;{self.save_catalog}.{self.fixed_schema}.{name}&quot;
+            self.input_tables[key] = self.spark.read.table(table_ident)
+            print(f&quot;{self.logging_string} - Loaded - {table_ident}&quot;)
+
+    def _create_table(self, df):
+        writer = df.writeTo(self.iceberg_table)
+        if self.partition_by:
+            writer = writer.partitionedBy(*[F.col(c) for c in self.partition_by])
+        writer.createOrReplace()
+
+    def _replace_table_partitions(self, df):
+        df.writeTo(self.iceberg_table).overwritePartitions()
+
+    def unload_data(self, processed_df):
+        processed_df.cache()
+        df_to_write = self._apply_incremental_policy(processed_df)
+        print(f&quot;{self.logging_string} - Saving data to Iceberg table - {self.iceberg_table}...&quot;)
+
+        self._ensure_namespace(self.save_catalog, self.fixed_schema)
+
+        self._create_table(df_to_write)
+        self.table_exists = True
+
+        print(f&quot;{self.logging_string} - Data successfully saved to Iceberg - {self.iceberg_table}&quot;)
+
+    def process_data(self, dfs):
+        print(f&quot;{self.logging_string} - Initializing processing...&quot;)
+        raise NotImplementedError(&quot;Override this method in your job.&quot;)
+
+    def run(self):
+        self.check_if_tables_exists_find_yearmonths()
+        self.load_data(self.input_table_names)
+
+        if hasattr(self, &quot;process_data&quot;):
+            processed_df = self.process_data(self.input_tables)
+            self.df = processed_df
+        else:
+            raise NotImplementedError(&quot;No process_data method defined.&quot;)
+
+        if self.unload:
+            self.unload_data(self.df)
+
+</code></pre>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>I/O Conventions</th>
+            <td>
+              <ul>
+                <li><span class="kv">flatfile</span>: reads CSV/Parquet/Excel/JSON from configured source location + relative path.</li>
+                <li><span class="kv">bronze</span>: dotted inputs use <span class="kv">spark.sql('SELECT * FROM &lt;catalog&gt;.&lt;name&gt;')</span>; others read from write catalog schema.</li>
+                <li><span class="kv">silver/gold/diamond</span>: reads from <span class="kv">&lt;save_catalog&gt;.&lt;fixed_schema&gt;.&lt;name&gt;</span>.</li>
+                <li>Writes use <span class="kv">createOrReplace()</span> on <span class="kv">&lt;save_catalog&gt;.&lt;fixed_schema&gt;.&lt;layer&gt;_&lt;output_table_name&gt;</span>.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <th>Incremental Policy</th>
+            <td>
+              Uses <span class="kv">incremental_column</span>, <span class="kv">incremental_type</span>,
+              <span class="kv">incremental_unit</span>, and <span class="kv">incremental_date_grain</span>.
+              Modes: <span class="kv">-1 / overwrite</span> = full overwrite,
+              <span class="kv">0 / append</span> = new incremental values only,
+              <span class="kv">N &gt; 0</span> = refresh latest N existing values + newer incoming values.
+              Active defaults: <span class="kv">year_month</span> /
+              <span class="kv">int</span> /
+              <span class="kv">18</span> /
+              <span class="kv">monthly</span>.
+            </td>
+          </tr>
+          <tr><th>Partition By</th><td><pre>None (set a list of columns to enable Iceberg partitioning)</pre></td></tr>
+          <tr><th>Unload</th><td>True (default)</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Execution Flow</h2>
+      <div class="mermaid-shell">
+        <div class="mermaid">
+flowchart TD
+    R["run()"] --> A["check_if_tables_exists_find_yearmonths()"]
+    A --> B["load_data(input_table_names)"]
+    B --> C["processed_df = process_data(input_tables)"]
+    C --> U{"unload?"}
+    U -- "No" --> Z["End"]
+    U -- "Yes" --> U1["unload_data(processed_df)"]
+    U1 --> U2["_ensure_namespace(save_catalog, fixed_schema)"]
+    U2 --> U3["_apply_incremental_policy(processed_df)"]
+    U3 --> U4["_create_table(df_to_write)"]
+    U4 --> Z
+
+    U3 -. "append/window modes read existing target" .-> T["spark.read.table(iceberg_table)"]
+        </div>
+      </div>
+
+      <h2>Usage Tips</h2>
+      <table class="info-table" aria-describedby="etl-base usage tips">
+        <tbody>
+          <tr><th>Required override</th><td>Implement <span class="kv">process_data(self, input_tables)</span> in each ETL module.</td></tr>
+          <tr><th>Input contract</th><td><span class="kv">input_tables</span> is a dict keyed by YAML aliases, each value already loaded as a DataFrame.</td></tr>
+          <tr><th>Incremental contract</th><td>For append/window modes, return data containing the configured <span class="kv">incremental_column</span> with valid <span class="kv">incremental_type</span>/<span class="kv">incremental_date_grain</span>.</td></tr>
+          <tr><th>Manual writes</th><td>Set <span class="kv">unload: false</span> if your job handles writes manually (for large partition-by-partition strategies).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        lineColor: "#888888",
+        tertiaryColor: "#aaaaaa",
+        primaryTextColor: "#111111",
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica"
+      }
+    });
+
+    const toggleBtn = document.getElementById("base-code-toggle");
+    const copyBtn = document.getElementById("base-code-copy");
+    const codeBox = document.getElementById("base-code-box");
+
+    function setExpanded(expanded) {
+      codeBox.classList.toggle("collapsed", !expanded);
+      toggleBtn.setAttribute("aria-expanded", String(expanded));
+      toggleBtn.textContent = expanded ? "Hide full code" : "Show full code";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      setExpanded(!expanded);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const codeText = codeBox.querySelector("code").innerText;
+      try {
+        await navigator.clipboard.writeText(codeText);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+      } catch (e) {
+        copyBtn.textContent = "Press Ctrl/Cmd+C";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+      }
+    });
+
+    setExpanded(false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+# =============================================================================
+# fbref_sources.yaml — competições/temporadas a baixar do FBref (via soccerdata)
+# =============================================================================
+#
+# Consumido pelo fetcher `etl/sources/fetch_fbref.py` (rodado MANUALMENTE na sua
+# máquina, pois faz scraping com rede e respeita o rate-limit do FBref). O
+# fetcher grava parquet bruto em `raw_output_dir`, e os jobs bronze_fbref_*
+# convertem para o schema canônico e unem ao StatsBomb.
+#
+# IMPORTANTE: as competições de 2ª divisão e da América do Sul NÃO vêm no
+# `soccerdata` por padrão. O fetcher injeta automaticamente as entradas abaixo no
+# league_dict do soccerdata (~/soccerdata/config/league_dict.json). Confirme os
+# nomes exatos do FBref com:  soccerdata.FBref().read_leagues()
+# -----------------------------------------------------------------------------
+
+# Onde o fetcher grava os parquet brutos (lidos depois pela camada bronze).
+raw_output_dir: "data/raw/fbref"
+
+# Temporadas no formato do soccerdata: "YYYY-YYYY" ou "YYYY" (ligas de ano único,
+# ex.: Brasil/Argentina/Libertadores costumam ser ano-calendário no FBref).
+# Ajuste o intervalo conforme a profundidade histórica que você quer.
+seasons:
+  - "2021"
+  - "2022"
+  - "2023"
+  - "2024"
+  - "2025"
+
+# Competições pedidas. `code` é a chave usada pelo soccerdata; `fbref_name` é o
+# nome EXATO da competição no FBref; `single_year` indica calendário de ano único.
+competitions:
+  # --- 2ª divisões europeias (temporada cruzada Ago–Mai → use "2122" etc.) ---
+  - { code: "ENG-Championship",      fbref_name: "Championship",                single_year: false }
+  - { code: "ITA-Serie B",           fbref_name: "Serie B",                     single_year: false }
+  - { code: "ESP-Segunda",           fbref_name: "Segunda División",            single_year: false }
+  - { code: "GER-2. Bundesliga",     fbref_name: "2. Bundesliga",               single_year: false }
+  # --- América do Sul (ano-calendário) ---
+  - { code: "BRA-Serie A",           fbref_name: "Série A",                     single_year: true }
+  - { code: "BRA-Serie B",           fbref_name: "Série B",                     single_year: true }
+  - { code: "ARG-Liga Profesional",  fbref_name: "Liga Profesional Argentina",  single_year: true }
+  - { code: "CONMEBOL-Libertadores", fbref_name: "Copa Libertadores",           single_year: true }

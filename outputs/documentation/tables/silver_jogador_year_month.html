@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jogador_year_month</title>
+  <style>
+    :root {
+      --bg: #353535ff;
+      --text: #500b3aff;
+      --panel: #f7f7f7;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,.35);
+      --accent: #d54e62ff;
+      --rule: #1f2937;
+      --muted: #94a3b8;
+      --cell: #555555;
+      --link: #60a5fa;
+      --btn: #d54e62ff;
+      --btn-text: #fff;
+      --btn-hover: #b8122d;
+      --code-bg: #353535ff;
+      --code-border: #353535ff;
+      --code-inset: rgba(255,255,255,.03);
+      --fade-top: rgba(11,16,33,0);
+      --fade-mid: rgba(11,16,33,.9);
+      --fade-bottom: rgba(11,16,33,1);
+      --mermaid-text: #111111;
+      --mermaid-line: #888888;
+      --mermaid-tertiary: #aaaaaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -70px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--mermaid-tertiary) 0%, transparent 70%);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--accent);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 2px;
+    }
+
+    .info-table,
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td,
+    .schema-table th,
+    .schema-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td,
+    .schema-table tr:last-child td { border-bottom: none; }
+
+    .info-table th {
+      color: var(--accent);
+      white-space: nowrap;
+      width: 200px;
+      font-weight: 700;
+    }
+
+    .info-table td,
+    .schema-table td { color: var(--cell); }
+
+    .schema-table thead th {
+      color: var(--accent);
+      background: var(--panel);
+      font-weight: 700;
+    }
+
+    .code-wrap { position: relative; }
+
+    .code-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .code-toolbar .btn {
+      appearance: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .code-toolbar .btn:hover { background: var(--btn-hover); }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height .25s ease;
+      box-shadow: inset 0 1px 0 var(--code-inset);
+    }
+
+    .code-box.collapsed { max-height: 180px; }
+
+    .code-box.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      background: linear-gradient(180deg, var(--fade-top) 0%, var(--fade-mid) 90%, var(--fade-bottom) 100%);
+      pointer-events: none;
+    }
+
+    pre { margin: 0; }
+
+    pre code.hljs {
+      background: var(--code-bg) !important;
+      white-space: pre-wrap !important;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .diagram-shell {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      overflow: auto;
+    }
+
+    .mermaid { min-width: 720px; }
+
+    .mermaid svg path,
+    .mermaid svg line,
+    .mermaid svg rect,
+    .mermaid svg polygon,
+    .mermaid svg text { fill: var(--mermaid-text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .footnote {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .panel { padding: 14px; }
+      .info-table th { width: 160px; }
+      .mermaid { min-width: 620px; }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="title-row">
+        <h1>jogador_year_month</h1>
+      </div>
+      <div class="meta">Generated 2026-06-15 21:24:04</div>
+      <div class="chip-row">
+        <span class="chip">Layer: SILVER</span>
+        <span class="chip">Unload: True</span>
+        <span class="chip">Incremental: False</span>
+      </div>
+
+      <table class="info-table" aria-describedby="job metadata">
+        <tbody>
+          <tr><th>Description</th><td>Estatísticas agregadas por jogador × year_month (elenco inteiro).</td></tr>
+          <tr><th>Module</th><td>silver_jogador_year_month</td></tr>
+          <tr><th>Module Path</th><td><pre>./etl/1_silver/silver_jogador_year_month.py</pre></td></tr>
+          <tr><th>Input Tables</th><td><pre> 'stats': 'bronze_all_stats_jogador/*.parquet' </pre></td></tr>
+          <tr><th>Output Table Name</th><td>jogador_year_month</td></tr>
+          <tr><th>Partition By</th><td><pre>None</pre></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Job Code</h2>
+      <div class="code-wrap" id="job-code-wrap">
+        <div class="code-toolbar">
+          <button class="btn" id="job-code-toggle" aria-expanded="false" aria-controls="job-code-box">Show full code</button>
+          <button class="btn" id="job-code-copy">Copy</button>
+        </div>
+        <div class="code-box collapsed" id="job-code-box">
+          <pre><code class="language-python">&quot;&quot;&quot;Silver — estatísticas agregadas por JOGADOR × year_month.
+
+Resume o histórico de cada jogador em granularidade mensal. Como em
+bronze_stats_jogador há exatamente uma linha por (jogador, partida), agregar por
+mês dá diretamente a &quot;forma&quot; mensal do jogador:
+
+  • `{stat}_mean`  — média POR PARTIDA no mês (mean sobre as partidas do mês);
+  • `{stat}_sum`   — total no mês;
+  • `n_partidas`   — partidas disputadas no mês;
+  • demais agregações configuradas em feature_config.yaml.
+
+As colunas são totalmente parametrizáveis: vêm de `player_match_stats` e
+`aggregations` no YAML. `{stat}_sum` e `n_partidas` são sempre gravados porque a
+gold os usa para a média móvel ponderada de 18 meses.
+
+Esta silver cobre o ELENCO INTEIRO (todos os jogadores com estatística), não só
+titulares — a seleção de titulares acontece na gold.
+&quot;&quot;&quot;
+import polars as pl
+
+from macros.features import (
+    get_aggregations,
+    get_player_stats,
+    silver_agg_expressions,
+    year_month_to_month_index,
+)
+
+
+def process_data(self, input_tables: dict[str, pl.DataFrame]) -&gt; pl.DataFrame:
+    stats = input_tables[&quot;stats&quot;]
+
+    stat_cols = get_player_stats()
+    aggs = get_aggregations()
+
+    # Descarta linhas sem id de jogador (não dá para chavear histórico estável).
+    stats = stats.filter(pl.col(&quot;player_id&quot;).is_not_null())
+
+    # Uma linha por (jogador, partida) =&gt; agregar por mês resume a forma mensal.
+    agg_exprs = silver_agg_expressions(stat_cols, aggs)
+
+    silver = stats.group_by([&quot;player_id&quot;, &quot;player_name&quot;, &quot;year_month&quot;]).agg(agg_exprs)
+
+    # month_index facilita a aritmética de janela na gold (reconstruído de YYYYMM).
+    silver = silver.with_columns(
+        year_month_to_month_index(&quot;year_month&quot;).alias(&quot;month_index&quot;)
+    )
+
+    return silver.sort([&quot;player_id&quot;, &quot;year_month&quot;])
+</code></pre>
+        </div>
+      </div>
+
+      <h2>Lineage</h2>
+      <div class="diagram-shell">
+        <div class="mermaid">
+flowchart LR
+  %% Node declarations
+  subgraph flatfile
+    bronze_all_stats_jogador/*.parquet(bronze_all_stats_jogador/*.parquet)
+  end
+  %% Edges
+  bronze_all_stats_jogador/*.parquet --> silver_jogador_year_month
+  %% Classes for groups
+  classDef flatfile stroke:#333333,fill:#EFEFEF,stroke-width:1px,color:#0F172A;
+  class bronze_all_stats_jogador/*.parquet flatfile
+        </div>
+      </div>
+
+      <h2>Table Schema</h2>
+      <table class="schema-table" aria-describedby="table schema">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Comment</th>
+            <th>Parent</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td>player_id</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.player_id, bronze_escalacoes.player_id</td></tr>
+<tr><td>player_name</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.player_name, bronze_escalacoes.player_name, bronze_fifa_players.player_name</td></tr>
+<tr><td>year_month</td><td>int64</td><td></td><td>bronze_partidas.year_month</td></tr>
+<tr><td>gols_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>gols_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>assistencias_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>assistencias_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>chutes_no_alvo_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>chutes_no_alvo_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>xg_total_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>xg_total_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>passes_completos_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>passes_completos_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>key_passes_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>key_passes_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_shot_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_shot_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_pass_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_pass_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_foul_committed_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_foul_committed_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_foul_won_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_foul_won_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_interception_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_interception_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_ball_recovery_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_ball_recovery_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_dribble_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_dribble_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_duel_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_duel_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_pressure_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_pressure_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_block_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_block_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_clearance_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_clearance_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_dispossessed_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_dispossessed_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_miscontrol_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>ev_miscontrol_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>def_acoes_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>def_acoes_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>def_erros_mean</td><td>double</td><td></td><td></td></tr>
+<tr><td>def_erros_sum</td><td>double</td><td></td><td></td></tr>
+<tr><td>n_partidas</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>month_index</td><td>int64</td><td></td><td>bronze_partidas.month_index</td></tr>
+        </tbody>
+      </table>
+
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        lineColor: "#888888",
+        tertiaryColor: "#aaaaaa",
+        primaryTextColor: "#111111",
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica"
+      }
+    });
+
+    const toggleBtn = document.getElementById("job-code-toggle");
+    const copyBtn = document.getElementById("job-code-copy");
+    const codeBox = document.getElementById("job-code-box");
+
+    function setExpanded(expanded) {
+      codeBox.classList.toggle("collapsed", !expanded);
+      toggleBtn.setAttribute("aria-expanded", String(expanded));
+      toggleBtn.textContent = expanded ? "Hide full code" : "Show full code";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      setExpanded(!expanded);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const codeText = codeBox.querySelector("code").innerText;
+      try {
+        await navigator.clipboard.writeText(codeText);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+      } catch (e) {
+        copyBtn.textContent = "Press Ctrl/Cmd+C";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+      }
+    });
+
+    setExpanded(false);
+  </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>fifa_players</title>
+  <style>
+    :root {
+      --bg: #353535ff;
+      --text: #500b3aff;
+      --panel: #f7f7f7;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,.35);
+      --accent: #d54e62ff;
+      --rule: #1f2937;
+      --muted: #94a3b8;
+      --cell: #555555;
+      --link: #60a5fa;
+      --btn: #d54e62ff;
+      --btn-text: #fff;
+      --btn-hover: #b8122d;
+      --code-bg: #353535ff;
+      --code-border: #353535ff;
+      --code-inset: rgba(255,255,255,.03);
+      --fade-top: rgba(11,16,33,0);
+      --fade-mid: rgba(11,16,33,.9);
+      --fade-bottom: rgba(11,16,33,1);
+      --mermaid-text: #111111;
+      --mermaid-line: #888888;
+      --mermaid-tertiary: #aaaaaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -70px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--mermaid-tertiary) 0%, transparent 70%);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--accent);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 2px;
+    }
+
+    .info-table,
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td,
+    .schema-table th,
+    .schema-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td,
+    .schema-table tr:last-child td { border-bottom: none; }
+
+    .info-table th {
+      color: var(--accent);
+      white-space: nowrap;
+      width: 200px;
+      font-weight: 700;
+    }
+
+    .info-table td,
+    .schema-table td { color: var(--cell); }
+
+    .schema-table thead th {
+      color: var(--accent);
+      background: var(--panel);
+      font-weight: 700;
+    }
+
+    .code-wrap { position: relative; }
+
+    .code-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .code-toolbar .btn {
+      appearance: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .code-toolbar .btn:hover { background: var(--btn-hover); }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height .25s ease;
+      box-shadow: inset 0 1px 0 var(--code-inset);
+    }
+
+    .code-box.collapsed { max-height: 180px; }
+
+    .code-box.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      background: linear-gradient(180deg, var(--fade-top) 0%, var(--fade-mid) 90%, var(--fade-bottom) 100%);
+      pointer-events: none;
+    }
+
+    pre { margin: 0; }
+
+    pre code.hljs {
+      background: var(--code-bg) !important;
+      white-space: pre-wrap !important;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .diagram-shell {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      overflow: auto;
+    }
+
+    .mermaid { min-width: 720px; }
+
+    .mermaid svg path,
+    .mermaid svg line,
+    .mermaid svg rect,
+    .mermaid svg polygon,
+    .mermaid svg text { fill: var(--mermaid-text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .footnote {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .panel { padding: 14px; }
+      .info-table th { width: 160px; }
+      .mermaid { min-width: 620px; }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="title-row">
+        <h1>fifa_players</h1>
+      </div>
+      <div class="meta">Generated 2026-06-15 21:24:04</div>
+      <div class="chip-row">
+        <span class="chip">Layer: BRONZE</span>
+        <span class="chip">Unload: True</span>
+        <span class="chip">Incremental: False</span>
+      </div>
+
+      <table class="info-table" aria-describedby="job metadata">
+        <tbody>
+          <tr><th>Description</th><td>FIFA → ratings de jogador por snapshot, tipados + chaves de time.</td></tr>
+          <tr><th>Module</th><td>bronze_fifa_players</td></tr>
+          <tr><th>Module Path</th><td><pre>./etl/0_bronze/bronze_fifa_players.py</pre></td></tr>
+          <tr><th>Input Tables</th><td><pre> 'players': 'flatfile_fifa_players/*.parquet' </pre></td></tr>
+          <tr><th>Output Table Name</th><td>fifa_players</td></tr>
+          <tr><th>Partition By</th><td><pre>None</pre></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Job Code</h2>
+      <div class="code-wrap" id="job-code-wrap">
+        <div class="code-toolbar">
+          <button class="btn" id="job-code-toggle" aria-expanded="false" aria-controls="job-code-box">Show full code</button>
+          <button class="btn" id="job-code-copy">Copy</button>
+        </div>
+        <div class="code-box collapsed" id="job-code-box">
+          <pre><code class="language-python">&quot;&quot;&quot;Bronze (FIFA) — ratings de jogador por edição/snapshot, limpos e tipados.
+
+Converte o flatfile `fifa_players` (tudo string) para tipos de negócio:
+  • `fifa_update_date` → Date (cada data é um SNAPSHOT do sofifa);
+  • atributos do jogador (overall, pace, value_eur, ...) → Float64;
+  • `league_id` → Int64;
+  • chaves de casamento de time normalizadas (`club_key`, `nation_key`) — nome
+    sem acento/pontuação e sem stopwords genéricas (ver `macros.fifa`), para
+    cruzar com os nomes de time do schedule na gold.
+
+Mantém apenas linhas com snapshot e overall válidos (FC26/linhas sem data ou sem
+overall ficam fora do casamento temporal). Uma linha = um jogador numa edição.
+&quot;&quot;&quot;
+import polars as pl
+
+from macros.fifa import FIFA_PLAYER_ATTRS, normalize_team_name
+
+
+def process_data(self, input_tables: dict[str, pl.DataFrame]) -&gt; pl.DataFrame:
+    players = input_tables[&quot;players&quot;]
+
+    players = players.with_columns(
+        pl.col(&quot;fifa_update_date&quot;).str.to_date(&quot;%Y-%m-%d&quot;, strict=False).alias(&quot;fifa_update_date&quot;),
+        pl.col(&quot;league_id&quot;).cast(pl.Float64, strict=False).cast(pl.Int64, strict=False),
+        *[pl.col(a).cast(pl.Float64, strict=False) for a in FIFA_PLAYER_ATTRS],
+    )
+
+    # Só snapshots/overall válidos (sem dado temporal não há como cruzar com a partida).
+    players = players.filter(
+        pl.col(&quot;fifa_update_date&quot;).is_not_null() &amp; pl.col(&quot;overall&quot;).is_not_null()
+    )
+
+    # Chaves normalizadas de time (clube e seleção). A normalização é uma UDF
+    # python (mesma usada no casamento de nomes da gold), então a aplicamos só nos
+    # nomes DISTINTOS e juntamos de volta — evita ~20M chamadas em 10M+ linhas.
+    clubs = players.select(&quot;club_name&quot;).unique().with_columns(
+        pl.col(&quot;club_name&quot;).map_elements(normalize_team_name, return_dtype=pl.Utf8).alias(&quot;club_key&quot;)
+    )
+    nations = players.select(&quot;nationality&quot;).unique().with_columns(
+        pl.col(&quot;nationality&quot;).map_elements(normalize_team_name, return_dtype=pl.Utf8).alias(&quot;nation_key&quot;)
+    )
+    players = players.join(clubs, on=&quot;club_name&quot;, how=&quot;left&quot;).join(nations, on=&quot;nationality&quot;, how=&quot;left&quot;)
+
+    return players.select(
+        &quot;fifa_update_date&quot;,
+        &quot;league_id&quot;,
+        &quot;club_name&quot;,
+        &quot;club_key&quot;,
+        &quot;club_position&quot;,
+        &quot;nationality&quot;,
+        &quot;nation_key&quot;,
+        &quot;nation_position&quot;,
+        &quot;positions&quot;,
+        pl.col(&quot;short_name&quot;).alias(&quot;player_name&quot;),
+        *FIFA_PLAYER_ATTRS,
+    )
+</code></pre>
+        </div>
+      </div>
+
+      <h2>Lineage</h2>
+      <div class="diagram-shell">
+        <div class="mermaid">
+flowchart LR
+  %% Node declarations
+  subgraph flatfile
+    flatfile_fifa_players/*.parquet(flatfile_fifa_players/*.parquet)
+  end
+  %% Edges
+  flatfile_fifa_players/*.parquet --> bronze_fifa_players
+  %% Classes for groups
+  classDef flatfile stroke:#333333,fill:#EFEFEF,stroke-width:1px,color:#0F172A;
+  class flatfile_fifa_players/*.parquet flatfile
+        </div>
+      </div>
+
+      <h2>Table Schema</h2>
+      <table class="schema-table" aria-describedby="table schema">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Comment</th>
+            <th>Parent</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td>fifa_update_date</td><td>date32[day]</td><td></td><td>flatfile_fifa_players.fifa_update_date</td></tr>
+<tr><td>league_id</td><td>int64</td><td></td><td>flatfile_fifa_players.league_id</td></tr>
+<tr><td>club_name</td><td>large_string</td><td></td><td>flatfile_fifa_players.club_name</td></tr>
+<tr><td>club_key</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>club_position</td><td>large_string</td><td></td><td>flatfile_fifa_players.club_position</td></tr>
+<tr><td>nationality</td><td>large_string</td><td></td><td>flatfile_fifa_players.nationality</td></tr>
+<tr><td>nation_key</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>nation_position</td><td>large_string</td><td></td><td>flatfile_fifa_players.nation_position</td></tr>
+<tr><td>positions</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.positions, flatfile_fifa_players.positions</td></tr>
+<tr><td>player_name</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.player_name, bronze_escalacoes.player_name</td></tr>
+<tr><td>overall</td><td>double</td><td></td><td>flatfile_fifa_players.overall</td></tr>
+<tr><td>potential</td><td>double</td><td></td><td>flatfile_fifa_players.potential</td></tr>
+<tr><td>value_eur</td><td>double</td><td></td><td>flatfile_fifa_players.value_eur</td></tr>
+<tr><td>age</td><td>double</td><td></td><td>flatfile_fbref_jogadores_temporada.age, flatfile_fbref_jogadores_chutes.age, flatfile_fbref_jogadores_diversos.age, flatfile_fbref_jogadores_minutos.age, flatfile_fbref_goleiros.age, flatfile_fifa_players.age</td></tr>
+<tr><td>pace</td><td>double</td><td></td><td>flatfile_fifa_players.pace</td></tr>
+<tr><td>shooting</td><td>double</td><td></td><td>flatfile_fifa_players.shooting</td></tr>
+<tr><td>passing</td><td>double</td><td></td><td>flatfile_fifa_players.passing</td></tr>
+<tr><td>dribbling</td><td>double</td><td></td><td>flatfile_fifa_players.dribbling</td></tr>
+<tr><td>defending</td><td>double</td><td></td><td>flatfile_fifa_players.defending</td></tr>
+<tr><td>physic</td><td>double</td><td></td><td>flatfile_fifa_players.physic</td></tr>
+        </tbody>
+      </table>
+
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        lineColor: "#888888",
+        tertiaryColor: "#aaaaaa",
+        primaryTextColor: "#111111",
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica"
+      }
+    });
+
+    const toggleBtn = document.getElementById("job-code-toggle");
+    const copyBtn = document.getElementById("job-code-copy");
+    const codeBox = document.getElementById("job-code-box");
+
+    function setExpanded(expanded) {
+      codeBox.classList.toggle("collapsed", !expanded);
+      toggleBtn.setAttribute("aria-expanded", String(expanded));
+      toggleBtn.textContent = expanded ? "Hide full code" : "Show full code";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      setExpanded(!expanded);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const codeText = codeBox.querySelector("code").innerText;
+      try {
+        await navigator.clipboard.writeText(codeText);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+      } catch (e) {
+        copyBtn.textContent = "Press Ctrl/Cmd+C";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+      }
+    });
+
+    setExpanded(false);
+  </script>
+</body>
+</html>

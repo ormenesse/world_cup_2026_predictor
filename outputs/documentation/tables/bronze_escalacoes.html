@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>escalacoes</title>
+  <style>
+    :root {
+      --bg: #353535ff;
+      --text: #500b3aff;
+      --panel: #f7f7f7;
+      --border: #ddd;
+      --shadow: rgba(0,0,0,.35);
+      --accent: #d54e62ff;
+      --rule: #1f2937;
+      --muted: #94a3b8;
+      --cell: #555555;
+      --link: #60a5fa;
+      --btn: #d54e62ff;
+      --btn-text: #fff;
+      --btn-hover: #b8122d;
+      --code-bg: #353535ff;
+      --code-border: #353535ff;
+      --code-inset: rgba(255,255,255,.03);
+      --fade-top: rgba(11,16,33,0);
+      --fade-mid: rgba(11,16,33,.9);
+      --fade-bottom: rgba(11,16,33,1);
+      --mermaid-text: #111111;
+      --mermaid-line: #888888;
+      --mermaid-tertiary: #aaaaaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px var(--shadow);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -70px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--mermaid-tertiary) 0%, transparent 70%);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--accent);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--panel);
+    }
+
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 8px 2px;
+    }
+
+    .info-table,
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .info-table th,
+    .info-table td,
+    .schema-table th,
+    .schema-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td,
+    .schema-table tr:last-child td { border-bottom: none; }
+
+    .info-table th {
+      color: var(--accent);
+      white-space: nowrap;
+      width: 200px;
+      font-weight: 700;
+    }
+
+    .info-table td,
+    .schema-table td { color: var(--cell); }
+
+    .schema-table thead th {
+      color: var(--accent);
+      background: var(--panel);
+      font-weight: 700;
+    }
+
+    .code-wrap { position: relative; }
+
+    .code-toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .code-toolbar .btn {
+      appearance: none;
+      background: var(--btn);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .code-toolbar .btn:hover { background: var(--btn-hover); }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      overflow: hidden;
+      position: relative;
+      transition: max-height .25s ease;
+      box-shadow: inset 0 1px 0 var(--code-inset);
+    }
+
+    .code-box.collapsed { max-height: 180px; }
+
+    .code-box.collapsed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      background: linear-gradient(180deg, var(--fade-top) 0%, var(--fade-mid) 90%, var(--fade-bottom) 100%);
+      pointer-events: none;
+    }
+
+    pre { margin: 0; }
+
+    pre code.hljs {
+      background: var(--code-bg) !important;
+      white-space: pre-wrap !important;
+      word-break: break-word;
+      overflow-x: hidden;
+    }
+
+    .diagram-shell {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel);
+      overflow: auto;
+    }
+
+    .mermaid { min-width: 720px; }
+
+    .mermaid svg path,
+    .mermaid svg line,
+    .mermaid svg rect,
+    .mermaid svg polygon,
+    .mermaid svg text { fill: var(--mermaid-text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .footnote {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .panel { padding: 14px; }
+      .info-table th { width: 160px; }
+      .mermaid { min-width: 620px; }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="title-row">
+        <h1>escalacoes</h1>
+      </div>
+      <div class="meta">Generated 2026-06-15 21:24:04</div>
+      <div class="chip-row">
+        <span class="chip">Layer: BRONZE</span>
+        <span class="chip">Unload: True</span>
+        <span class="chip">Incremental: False</span>
+      </div>
+
+      <table class="info-table" aria-describedby="job metadata">
+        <tbody>
+          <tr><th>Description</th><td>Escalação completa: titularidade + contagem de cartões/expulsões.</td></tr>
+          <tr><th>Module</th><td>bronze_escalacoes</td></tr>
+          <tr><th>Module Path</th><td><pre>./etl/0_bronze/bronze_escalacoes.py</pre></td></tr>
+          <tr><th>Input Tables</th><td><pre> 'escalacoes': 'flatfile_sb_escalacoes/*.parquet' </pre></td></tr>
+          <tr><th>Output Table Name</th><td>escalacoes</td></tr>
+          <tr><th>Partition By</th><td><pre>None</pre></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Job Code</h2>
+      <div class="code-wrap" id="job-code-wrap">
+        <div class="code-toolbar">
+          <button class="btn" id="job-code-toggle" aria-expanded="false" aria-controls="job-code-box">Show full code</button>
+          <button class="btn" id="job-code-copy">Copy</button>
+        </div>
+        <div class="code-box collapsed" id="job-code-box">
+          <pre><code class="language-python">&quot;&quot;&quot;Bronze — escalações (uma linha por jogador escalado por partida).
+
+Mantém a ESCALAÇÃO COMPLETA (titulares + reservas que entraram). A flag
+`is_starter` permite que a gold use só os titulares agora, e que mais tarde se
+teste o uso do elenco inteiro sem reprocessar esta camada.
+
+Transformações:
+  • `is_starter`         — titular (Starting XI)?  (parse de `positions`)
+  • `cards_yellow`       — nº de cartões amarelos
+  • `cards_second_yellow`— nº de segundos amarelos
+  • `cards_red`          — nº de cartões vermelhos diretos
+  • `cards_expulsion`    — expulsões = segundos amarelos + vermelhos diretos
+
+Os campos `cards`/`positions` são `repr` de listas de dicts; o parsing é feito
+de forma vetorizada por contagem de padrão (ver macros/features.py).
+&quot;&quot;&quot;
+import polars as pl
+
+from macros.features import (
+    card_count_expr,
+    is_starter_expr,
+    player_uid_expr,
+    position_group_from_statsbomb,
+)
+
+
+def process_data(self, input_tables: dict[str, pl.DataFrame]) -&gt; pl.DataFrame:
+    esc = input_tables[&quot;escalacoes&quot;]
+
+    esc = esc.with_columns(
+        is_starter_expr(&quot;positions&quot;).alias(&quot;is_starter&quot;),
+        position_group_from_statsbomb(&quot;positions&quot;),  # GK/DEF/MID/FWD
+        # ID canônico unificado (mesmo nome → mesmo id em qualquer fonte).
+        player_uid_expr(&quot;player_name&quot;),
+        card_count_expr(&quot;Yellow Card&quot;).alias(&quot;cards_yellow&quot;),
+        card_count_expr(&quot;Second Yellow&quot;).alias(&quot;cards_second_yellow&quot;),
+        card_count_expr(&quot;Red Card&quot;).alias(&quot;cards_red&quot;),
+    ).with_columns(
+        # Expulsão = saiu de campo por cartão: 2º amarelo OU vermelho direto.
+        (pl.col(&quot;cards_second_yellow&quot;) + pl.col(&quot;cards_red&quot;)).alias(&quot;cards_expulsion&quot;),
+    )
+
+    return esc.select(
+        &quot;match_id&quot;,
+        &quot;team&quot;,
+        &quot;competition_id&quot;,
+        &quot;season_id&quot;,
+        &quot;player_id&quot;,
+        &quot;player_name&quot;,
+        &quot;jersey_number&quot;,
+        &quot;is_starter&quot;,
+        &quot;position_group&quot;,
+        &quot;cards_yellow&quot;,
+        &quot;cards_second_yellow&quot;,
+        &quot;cards_red&quot;,
+        &quot;cards_expulsion&quot;,
+        pl.lit(&quot;statsbomb&quot;).alias(&quot;source&quot;),
+    )
+</code></pre>
+        </div>
+      </div>
+
+      <h2>Lineage</h2>
+      <div class="diagram-shell">
+        <div class="mermaid">
+flowchart LR
+  %% Node declarations
+  subgraph flatfile
+    flatfile_sb_escalacoes/*.parquet(flatfile_sb_escalacoes/*.parquet)
+  end
+  %% Edges
+  flatfile_sb_escalacoes/*.parquet --> bronze_escalacoes
+  %% Classes for groups
+  classDef flatfile stroke:#333333,fill:#EFEFEF,stroke-width:1px,color:#0F172A;
+  class flatfile_sb_escalacoes/*.parquet flatfile
+        </div>
+      </div>
+
+      <h2>Table Schema</h2>
+      <table class="schema-table" aria-describedby="table schema">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Comment</th>
+            <th>Parent</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr><td>match_id</td><td>int64</td><td></td><td>match_id</td></tr>
+<tr><td>team</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.team, flatfile_sb_stats_jogador.team, flatfile_fbref_jogadores_temporada.team, flatfile_fbref_jogadores_chutes.team, flatfile_fbref_jogadores_diversos.team, flatfile_fbref_jogadores_minutos.team, flatfile_fbref_goleiros.team</td></tr>
+<tr><td>competition_id</td><td>int64</td><td></td><td>competition_id, competition_stage_id</td></tr>
+<tr><td>season_id</td><td>int64</td><td></td><td>season_id</td></tr>
+<tr><td>player_id</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.player_id</td></tr>
+<tr><td>player_name</td><td>large_string</td><td></td><td>flatfile_sb_escalacoes.player_name</td></tr>
+<tr><td>jersey_number</td><td>int64</td><td></td><td>flatfile_sb_escalacoes.jersey_number</td></tr>
+<tr><td>is_starter</td><td>bool</td><td></td><td></td></tr>
+<tr><td>position_group</td><td>large_string</td><td></td><td></td></tr>
+<tr><td>cards_yellow</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>cards_second_yellow</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>cards_red</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>cards_expulsion</td><td>uint32</td><td></td><td></td></tr>
+<tr><td>source</td><td>large_string</td><td></td><td>bronze_partidas.source</td></tr>
+        </tbody>
+      </table>
+
+      <div class="footnote"><a href="https://boltpipeliner-documentation.vercel.app/docs" target="_blank" rel="noreferrer">Created by Bolt-Pipeliner</a></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "base",
+      themeVariables: {
+        lineColor: "#888888",
+        tertiaryColor: "#aaaaaa",
+        primaryTextColor: "#111111",
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, Helvetica"
+      }
+    });
+
+    const toggleBtn = document.getElementById("job-code-toggle");
+    const copyBtn = document.getElementById("job-code-copy");
+    const codeBox = document.getElementById("job-code-box");
+
+    function setExpanded(expanded) {
+      codeBox.classList.toggle("collapsed", !expanded);
+      toggleBtn.setAttribute("aria-expanded", String(expanded));
+      toggleBtn.textContent = expanded ? "Hide full code" : "Show full code";
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      setExpanded(!expanded);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      const codeText = codeBox.querySelector("code").innerText;
+      try {
+        await navigator.clipboard.writeText(codeText);
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1200);
+      } catch (e) {
+        copyBtn.textContent = "Press Ctrl/Cmd+C";
+        setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+      }
+    });
+
+    setExpanded(false);
+  </script>
+</body>
+</html>

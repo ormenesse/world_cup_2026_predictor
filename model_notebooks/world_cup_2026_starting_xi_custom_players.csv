@@ -1,0 +1,529 @@
+player_name,position,sector,nationality,overall,potential,value_eur,age,pace,shooting,passing,dribbling,defending,physic
+Zidane,GK,Goleiro,Algeria,74,76,32490000,25,42,76,59,67,75,69
+R. Belghali,RB,Defesa,Algeria,66,73,1600000,23,81,60,61,66,61,62
+Belaid,CB,Defesa,Algeria,78,82,47610000,23,68,48,66,64,82,83
+R. Bensebaini,CB,Defesa,Algeria,79,79,15000000,30,73,70,70,77,78,79
+R. Aït-Nouri,LB,Defesa,Algeria,81,85,34500000,24,84,53,76,84,77,70
+R. Zerrouki,CDM,Meio,Algeria,73,75,3300000,27,62,66,69,72,68,80
+H. Boudaoui,CM,Meio,Algeria,77,80,14000000,25,73,67,74,77,74,76
+R. Mahrez,RW,Ataque,Algeria,84,84,20000000,34,78,80,81,88,39,63
+H. Aouar,CAM,Meio,Algeria,77,78,12000000,27,66,72,75,82,65,65
+F. Chaïbi,LW,Ataque,Algeria,74,81,8500000,22,69,68,75,76,68,69
+A. Gouiri,ST,Ataque,Algeria,79,84,26000000,25,77,82,76,80,45,71
+N. Al Aqidi,GK,Goleiro,Saudi Arabia,72,78,2900000,25,47,74,67,69,71,66
+N. Boushal,RB,Defesa,Saudi Arabia,67,70,1200000,25,82,39,51,64,62,73
+H. Tombakti,CB,Defesa,Saudi Arabia,72,77,3100000,26,83,35,57,64,73,74
+A. Al Amri,CB,Defesa,Saudi Arabia,70,72,1600000,28,69,29,51,47,68,81
+M. Al Harbi,LB,Defesa,Saudi Arabia,67,72,1400000,25,93,54,62,67,56,60
+M. Kanno,CM,Meio,Saudi Arabia,72,72,2200000,30,72,69,70,71,69,76
+A. Al Khaibari,CDM,Meio,Saudi Arabia,68,68,1100000,28,73,43,63,66,64,72
+N. Al Dawsari,CM,Meio,Saudi Arabia,68,71,1600000,26,68,60,70,68,62,70
+S. Mandash,RW,Ataque,Saudi Arabia,67,67,975000,30,82,58,59,71,25,61
+F. Al Birekan,ST,Ataque,Saudi Arabia,75,78,7500000,25,78,72,62,74,37,73
+S. Al Dawsari,LW,Ataque,Saudi Arabia,82,82,19000000,33,87,75,75,84,57,81
+E. Martínez,GK,Goleiro,Argentina,85,85,26500000,32,56,85,82,82,84,85
+N. Molina,RB,Defesa,Argentina,79,80,18500000,27,82,67,73,76,75,71
+N. Otamendi,CB,Defesa,Argentina,82,82,5500000,37,60,57,64,62,83,85
+C. Romero,CB,Defesa,Argentina,82,84,32500000,27,66,48,62,65,83,81
+N. Tagliafico,LB,Defesa,Argentina,78,78,9500000,32,67,56,70,76,77,76
+A. Mac Allister,CM,Meio,Argentina,87,88,93000000,26,66,82,85,85,78,76
+L. Paredes,CDM,Meio,Argentina,78,78,11500000,31,62,70,82,79,72,74
+E. Fernández,CM,Meio,Argentina,84,87,57000000,24,68,75,85,81,73,75
+L. Messi,RW,Ataque,Argentina,86,86,22000000,38,78,85,85,90,33,64
+J. Alvarez,ST,Ataque,Argentina,87,90,107000000,25,85,87,81,87,57,79
+Almada,LW,Ataque,Argentina,86,90,86490000,22,94,87,87,91,64,81
+Patrick Beach,GK,Goleiro,Australia,65,77,1500000,21,31,71,64,62,66,62
+Jordan Bos,LWB,Defesa,Australia,69,78,3000000,22,87,58,60,68,61,79
+Cameron Burgess,CB,Defesa,Australia,73,73,2500000,29,48,37,57,54,73,78
+Harry Souttar,CB,Defesa,Australia,73,75,3300000,26,46,28,51,54,73,75
+Alessandro Circati,CB,Defesa,Australia,71,80,3900000,21,59,35,53,49,72,77
+Jacob Italiano,RWB,Defesa,Australia,64,69,825000,23,76,56,60,69,59,56
+Nestory Irankunda,LM,Meio,Australia,67,82,2400000,19,88,70,62,70,43,74
+Aiden O'Neill,CM,Meio,Australia,70,70,1500000,26,76,61,65,68,66,77
+Paul Okon-Engstler,CM,Meio,Australia,52,61,160000,20,64,38,47,52,47,56
+Connor Metcalfe,RM,Meio,Australia,69,73,1900000,25,72,60,66,70,62,75
+Mohamed Toure,ST,Ataque,Australia,68,76,2700000,21,86,65,57,67,33,72
+A. Schlager,GK,Goleiro,Austria,73,75,2500000,29,46,76,69,71,73,73
+K. Laimer,RB,Defesa,Austria,82,82,27500000,28,82,69,76,75,81,76
+P. Lienhart,CB,Defesa,Austria,79,80,16500000,28,67,28,59,64,81,78
+D. Alaba,CB,Defesa,Austria,82,82,14500000,33,68,71,82,79,82,75
+P. Mwene,LB,Defesa,Austria,76,76,5500000,31,78,55,69,75,70,70
+X. Schlager,CDM,Meio,Austria,80,82,23000000,27,69,70,74,78,75,78
+N. Seiwald,CM,Meio,Austria,77,84,20000000,24,72,62,74,74,74,76
+P. Wimmer,RW,Ataque,Austria,77,83,16500000,24,84,69,72,81,49,73
+R. Schmid,CAM,Meio,Austria,78,81,18500000,25,77,67,78,83,56,58
+Sabitzer,LW,Ataque,Austria,80,82,56250000,26,88,81,81,85,58,75
+Arnautovic,ST,Ataque,Austria,81,83,60840000,26,85,84,78,82,56,83
+T. Courtois,GK,Goleiro,Belgium,89,89,33500000,33,46,90,76,89,88,88
+T. Castagne,RB,Defesa,Belgium,76,76,6500000,29,68,57,70,72,74,71
+Z. Debast,CB,Defesa,Belgium,78,86,30000000,21,70,56,76,74,77,76
+A. Theate,CB,Defesa,Belgium,80,84,26500000,25,67,40,70,71,80,82
+M. De Cuyper,LB,Defesa,Belgium,80,86,31000000,24,76,73,80,79,75,75
+Y. Tielemans,CDM,Meio,Belgium,85,85,54000000,28,54,79,85,80,75,72
+A. Onana,CM,Meio,Belgium,79,83,23000000,23,74,62,72,73,78,81
+J. Doku,RW,Ataque,Belgium,80,85,32000000,23,91,71,72,87,32,68
+K. De Bruyne,CAM,Meio,Belgium,87,87,36500000,34,66,83,92,84,65,72
+L. Trossard,LW,Ataque,Belgium,83,83,35000000,30,80,81,80,85,30,60
+C. De Ketelaere,ST,Ataque,Belgium,82,86,43500000,24,70,79,80,83,56,68
+Nikola Vasilj,GK,Goleiro,Bosnia and Herzegovina,77,78,8000000,29,34,79,65,72,76,77
+Sead Kolasinac,LB,Defesa,Bosnia and Herzegovina,79,79,11500000,32,61,63,68,69,79,82
+Tarik Muharemovic,CB,Defesa,Bosnia and Herzegovina,70,79,3300000,22,59,23,47,56,73,67
+Nikola Katic,CB,Defesa,Bosnia and Herzegovina,69,71,1400000,28,51,35,45,53,68,79
+Amar Dedic,RB,Defesa,Bosnia and Herzegovina,74,79,6000000,22,83,60,70,76,66,76
+Esmir Bajraktarevic,LM,Meio,Bosnia and Herzegovina,67,84,2700000,20,77,54,65,76,40,59
+Ivan Basic,CM,Meio,Bosnia and Herzegovina,74,78,32490000,22,72,66,77,75,72,73
+Benjamin Tahirovic,CM,Meio,Bosnia and Herzegovina,67,76,2200000,22,51,50,62,66,62,71
+Amar Memic,RM,Meio,Bosnia and Herzegovina,72,74,3000000,24,81,69,68,73,48,61
+Ermedin Demirovic,ST,Ataque,Bosnia and Herzegovina,80,80,23000000,27,72,81,73,78,42,78
+Jovo Lukic,ST,Ataque,Bosnia and Herzegovina,64,66,725000,26,61,64,47,59,27,69
+Alisson Becker,GK,Goleiro,Brazil,89,89,51000000,32,56,89,86,85,88,90
+Douglas Santos,LB,Defesa,Brazil,78,78,4500000,32,72,59,75,76,78,74
+Gabriel Magalhaes,CB,Defesa,Brazil,88,88,84000000,27,64,44,64,65,88,84
+Marquinhos,CB,Defesa,Brazil,87,87,54500000,31,78,56,75,74,89,80
+Roger Ibanez,RB,Defesa,Brazil,82,84,33500000,26,87,32,47,61,83,85
+Bruno Guimaraes,CDM,Meio,Brazil,86,87,77500000,27,66,75,84,84,79,81
+Casemiro,CDM,Meio,Brazil,80,80,10500000,33,36,74,76,69,80,76
+Vinicius Junior,LW,Ataque,Brazil,89,92,141000000,24,95,84,81,91,29,69
+Lucas Paqueta,CAM,Meio,Brazil,80,80,22500000,27,68,78,78,84,69,75
+Raphinha,RW,Ataque,Brazil,89,89,104000000,28,91,84,85,87,53,75
+Igor Thiago,ST,Ataque,Brazil,75,79,8000000,24,66,75,54,69,37,78
+Maxime Crepeau,GK,Goleiro,Canada,69,69,750000,31,45,72,64,69,70,66
+Richie Laryea,LB,Defesa,Canada,76,78,39690000,24,82,58,72,73,77,75
+Derek Cornelius,CB,Defesa,Canada,74,76,4500000,27,67,45,55,57,71,85
+Luc de Fougerolles,CB,Defesa,Canada,60,80,650000,19,64,32,45,49,62,58
+Alistair Johnston,RB,Defesa,Canada,78,81,17000000,26,82,59,73,72,73,80
+Liam Millar,LM,Meio,Canada,72,75,3100000,25,85,66,66,75,52,59
+Ismael Kone,CM,Meio,Canada,72,79,4700000,23,78,63,68,71,64,69
+Stephen Eustaquio,CM,Meio,Canada,77,78,10000000,28,66,67,76,73,73,74
+Tajon Buchanan,RM,Meio,Canada,74,75,5000000,26,90,65,66,74,67,73
+Tani Oluwaseyi,ST,Ataque,Canada,79,79,51840000,28,83,82,76,80,54,81
+Jonathan David,ST,Ataque,Canada,82,85,41000000,25,81,82,71,80,34,78
+Vozinha,GK,Goleiro,Cabo Verde,70,70,20250000,29,42,72,55,63,71,65
+S. Moreira,RB,Defesa,Cabo Verde,72,72,1900000,30,73,33,67,71,72,74
+R. Lopes,CB,Defesa,Cabo Verde,66,66,400000,33,45,29,46,51,64,77
+Borges,CB,Defesa,Cabo Verde,70,72,20250000,24,60,40,58,56,74,75
+Sidny Cabral,LB,Defesa,Cabo Verde,66,75,1800000,22,82,53,63,68,60,62
+Lenini,CDM,Meio,Cabo Verde,72,72,26010000,29,68,57,74,70,75,73
+Duarte,CM,Meio,Cabo Verde,68,68,15210000,27,66,60,71,69,66,67
+Rodrigues,RW,Ataque,Cabo Verde,69,71,17640000,26,77,70,70,74,47,64
+Jamiro Monteiro,CAM,Meio,Cabo Verde,69,69,1200000,31,72,59,70,72,54,68
+Jovane Cabral,LW,Ataque,Cabo Verde,70,70,1700000,27,77,71,68,72,38,68
+Dailon Livramento,ST,Ataque,Cabo Verde,70,75,2400000,24,82,71,56,68,34,64
+Á. Montero,GK,Goleiro,Colombia,75,76,4200000,30,43,71,72,74,75,80
+D. Muñoz,RB,Defesa,Colombia,81,81,22500000,29,75,69,72,76,79,81
+D. Sánchez,CB,Defesa,Colombia,82,82,25500000,29,82,58,63,73,82,88
+Y. Mina,CB,Defesa,Colombia,77,77,8500000,30,34,50,52,55,77,84
+J. Mojica,LB,Defesa,Colombia,78,78,9500000,32,88,65,73,73,74,70
+J. Lerma,CDM,Meio,Colombia,77,77,9000000,30,68,71,70,74,76,79
+R. Ríos,CM,Meio,Colombia,79,83,24500000,25,81,70,77,82,72,82
+J. Arias,RW,Ataque,Colombia,78,78,15000000,27,85,75,74,79,42,68
+James,CAM,Meio,Colombia,81,85,60840000,22,81,82,84,85,61,75
+L. Díaz,LW,Ataque,Colombia,85,85,54500000,28,88,81,76,87,45,75
+L. Suárez,ST,Ataque,Colombia,77,78,12500000,27,83,77,66,75,38,78
+Kim Seung-gyu,GK,Goleiro,Korea Republic,76,76,39690000,27,42,78,61,69,77,71
+Lee Gi-hyuk,CB,Defesa,Korea Republic,69,76,2600000,24,82,55,59,67,66,77
+Kim Min-jae,CB,Defesa,Korea Republic,82,83,29000000,28,73,33,58,63,83,84
+Lee Han-beom,CB,Defesa,Korea Republic,69,78,2900000,23,55,29,51,58,69,71
+Lee Tae-seok,LWB,Defesa,Korea Republic,69,75,2100000,22,79,40,60,68,62,71
+Paik Seung-ho,CM,Meio,Korea Republic,72,72,2100000,28,67,67,70,73,66,75
+Hwang In-beom,CM,Meio,Korea Republic,77,77,10500000,28,62,70,76,77,63,65
+Seol Young-woo,RWB,Defesa,Korea Republic,75,75,36000000,29,81,57,71,72,76,74
+Lee Jae-sung,LW,Ataque,Korea Republic,78,82,47610000,22,86,79,79,83,56,73
+Son Heung-min,ST,Ataque,Korea Republic,85,85,43000000,32,84,84,81,83,42,73
+Lee Kang-in,RW,Ataque,Korea Republic,79,84,26500000,24,72,75,80,82,50,64
+Y. Fofana,GK,Goleiro,Côte d'Ivoire,76,81,9000000,24,41,79,70,71,76,74
+G. Doué,RB,Defesa,Côte d'Ivoire,77,82,15000000,22,72,47,70,72,74,78
+O. Kossounou,CB,Defesa,Côte d'Ivoire,80,85,29000000,24,80,32,64,67,81,78
+E. Ndicka,CB,Defesa,Côte d'Ivoire,81,83,28500000,25,74,53,69,69,81,82
+G. Konan,LB,Defesa,Côte d'Ivoire,72,72,2100000,29,79,51,66,70,68,74
+F. Kessié,CM,Meio,Côte d'Ivoire,80,81,20500000,28,78,77,73,78,78,86
+I. Sangaré,CDM,Meio,Côte d'Ivoire,77,79,11500000,27,58,65,72,71,77,79
+C. Inao Oulaï,CM,Meio,Côte d'Ivoire,64,78,1400000,19,74,50,61,69,58,49
+N. Pépé,RW,Ataque,Côte d'Ivoire,80,80,20500000,30,88,77,76,82,36,67
+E. Guessand,ST,Ataque,Côte d'Ivoire,79,84,26500000,24,83,76,73,79,36,77
+Y. Diomande,LW,Ataque,Côte d'Ivoire,66,78,2000000,18,71,61,62,64,25,49
+Room,GK,Goleiro,Curaçao,68,68,15210000,27,42,70,53,61,69,63
+S. Sambo,RB,Defesa,Curaçao,68,75,2300000,23,78,45,59,67,63,72
+Van Ejma,CB,Defesa,Curaçao,68,70,15210000,24,58,38,56,54,72,73
+Obispo,CB,Defesa,Curaçao,70,72,20250000,26,60,40,58,56,74,75
+S. Floranus,LB,Defesa,Curaçao,66,67,925000,26,82,42,55,67,62,73
+J. Bacuna,CM,Meio,Curaçao,69,70,1400000,27,73,68,69,72,63,76
+L. Comenencia,CDM,Meio,Curaçao,62,76,950000,21,74,43,55,61,57,61
+Leandro Bacuna,CM,Meio,Curaçao,69,69,17640000,29,67,61,72,70,67,68
+T. Chong,RW,Ataque,Curaçao,71,76,2800000,25,77,66,70,73,54,63
+Locadia,ST,Ataque,Curaçao,71,71,23040000,27,75,74,68,72,46,73
+Gorré,LW,Ataque,Curaçao,72,74,26010000,25,80,73,73,77,50,67
+D. Livaković,GK,Goleiro,Croatia,80,80,14000000,30,56,83,71,76,80,80
+J. Stanišić,RB,Defesa,Croatia,78,82,17500000,25,73,44,65,69,79,74
+J. Šutalo,CB,Defesa,Croatia,78,82,17500000,25,77,32,62,72,78,80
+D. Ćaleta-Car,CB,Defesa,Croatia,74,74,3600000,28,58,39,55,59,74,76
+J. Gvardiol,LB,Defesa,Croatia,84,87,53500000,23,78,71,75,78,84,82
+P. Sučić,CDM,Meio,Croatia,74,83,9500000,21,69,68,72,77,61,74
+L. Modrić,CM,Meio,Croatia,83,83,11500000,39,68,74,86,86,70,62
+M. Pašalić,RW,Ataque,Croatia,71,74,2600000,24,76,72,67,75,35,56
+A. Kramarić,CAM,Meio,Croatia,81,81,12000000,34,67,82,78,84,33,73
+I. Perišić,LW,Ataque,Croatia,81,81,8500000,36,75,80,81,79,69,75
+A. Budimir,ST,Ataque,Croatia,82,82,19500000,33,59,84,63,76,35,80
+H. Galíndez,GK,Goleiro,Ecuador,74,74,475000,38,32,74,70,73,74,76
+Á. Preciado,RB,Defesa,Ecuador,75,75,6000000,27,87,62,70,76,66,71
+J. Ordoñez,CB,Defesa,Ecuador,75,86,12000000,21,74,26,54,56,74,79
+W. Pacho,CB,Defesa,Ecuador,86,89,83000000,23,80,34,62,62,86,86
+P. Hincapié,LB,Defesa,Ecuador,83,89,52000000,23,84,41,65,72,84,82
+Vite,CM,Meio,Ecuador,74,78,32490000,22,72,66,77,75,72,73
+M. Caicedo,CDM,Meio,Ecuador,87,89,93000000,23,71,64,78,81,84,82
+D. Castillo,CM,Meio,Ecuador,67,76,2300000,21,60,52,67,65,64,71
+J. Yeboah,RW,Ataque,Ecuador,70,75,2400000,25,92,66,62,75,26,57
+A. Valencia,ST,Ataque,Ecuador,67,77,2300000,21,82,59,61,74,52,53
+N. Angulo,LW,Ataque,Ecuador,67,78,2300000,22,80,60,60,68,34,55
+El Shenawy,GK,Goleiro,Egypt,77,81,43560000,22,42,79,62,70,78,72
+Ibrahim,CB,Defesa,Egypt,76,78,39690000,26,66,46,64,62,80,81
+Abdelmaguif,CB,Defesa,Egypt,76,80,39690000,23,66,46,64,62,80,81
+R. Rabia,CB,Defesa,Egypt,67,67,650000,32,60,49,55,55,67,72
+Hany,RM,Meio,Egypt,76,80,39690000,22,84,77,77,81,54,71
+Ateya,CM,Meio,Egypt,76,78,39690000,26,74,68,79,77,74,75
+Lasheen,CM,Meio,Egypt,75,79,36000000,22,73,67,78,76,73,74
+Fatouh,LM,Meio,Egypt,76,76,39690000,29,84,77,77,81,54,71
+Ashour,CAM,Meio,Egypt,78,80,47610000,24,78,79,81,82,58,72
+M. Salah,ST,Ataque,Egypt,91,91,82000000,33,89,88,86,90,45,76
+O. Marmoush,ST,Ataque,Egypt,84,85,50500000,26,89,85,76,86,34,71
+M. Maignan,GK,Goleiro,France,87,88,61000000,29,64,88,85,83,85,84
+J. Koundé,RB,Defesa,France,87,88,85500000,26,84,47,74,79,86,84
+W. Saliba,CB,Defesa,France,87,89,92000000,24,77,39,68,72,87,83
+D. Upamecano,CB,Defesa,France,85,88,62500000,26,77,45,64,73,84,84
+L. Hernández,LB,Defesa,France,81,81,21500000,29,71,54,72,70,82,77
+A. Rabiot,CDM,Meio,France,83,83,35000000,30,81,79,81,80,77,84
+A. Tchouaméni,CM,Meio,France,84,87,50500000,25,71,69,79,78,81,82
+O. Dembélé,RW,Ataque,France,90,90,122500000,28,91,88,83,93,50,69
+M. Olise,CAM,Meio,France,86,88,88000000,23,78,80,84,87,50,66
+D. Doué,LW,Ataque,France,85,91,83500000,20,83,80,77,90,55,74
+K. Mbappé,ST,Ataque,France,91,94,173500000,26,97,90,81,92,37,76
+M. Neuer,GK,Goleiro,Germany,84,84,4700000,39,31,81,90,81,82,86
+J. Kimmich,RB,Defesa,Germany,89,89,86000000,30,72,74,89,84,83,79
+J. Tah,CB,Defesa,Germany,87,87,66500000,29,63,38,60,63,87,86
+N. Schlotterbeck,CB,Defesa,Germany,85,88,63500000,25,74,60,75,73,85,82
+D. Raum,LB,Defesa,Germany,82,83,32000000,27,86,61,80,79,74,78
+A. Pavlović,CDM,Meio,Germany,79,87,37000000,21,62,64,79,78,76,71
+L. Goretzka,CM,Meio,Germany,82,82,29000000,30,77,78,80,80,80,82
+L. Sané,RW,Ataque,Germany,82,82,30000000,29,87,81,78,85,37,68
+J. Musiala,CAM,Meio,Germany,88,92,133500000,22,80,82,80,90,66,65
+F. Wirtz,LW,Ataque,Germany,89,93,150500000,22,80,82,88,90,54,67
+K. Havertz,ST,Ataque,Germany,82,84,38000000,26,72,79,78,81,48,74
+Asare,GK,Goleiro,Ghana,77,79,43560000,26,42,79,62,70,78,72
+J. Adjetey,CB,Defesa,Ghana,70,82,3700000,21,70,23,47,50,71,71
+A. Seidu,CB,Defesa,Ghana,74,80,6000000,25,61,43,61,70,75,67
+K. Oppong,CB,Defesa,Ghana,68,78,2500000,21,74,25,44,55,68,71
+C. Yirenkyi,RM,Meio,Ghana,67,82,2400000,19,66,59,59,67,63,70
+K. Sibo,CM,Meio,Ghana,69,72,1600000,27,63,54,58,65,67,79
+T. Partey,CM,Meio,Ghana,83,83,24000000,32,59,71,80,77,80,82
+G. Mensah,LM,Meio,Ghana,74,75,4500000,26,76,57,65,72,68,67
+K. Sulemana,RW,Ataque,Ghana,71,76,2800000,23,88,63,63,76,28,59
+A. Semenyo,ST,Ataque,Ghana,80,82,26500000,25,80,78,73,81,40,79
+J. Ayew,LW,Ataque,Ghana,73,73,1900000,33,66,73,70,75,56,71
+Z. Suzuki,GK,Goleiro,Japan,74,82,8000000,22,56,76,71,72,74,73
+Tomiyasu,CB,Defesa,Japan,76,78,39690000,25,66,46,64,62,80,81
+S. Taniguchi,CB,Defesa,Japan,69,69,675000,33,58,45,59,57,70,72
+K. Itakura,CB,Defesa,Japan,77,78,10000000,28,75,59,61,74,77,76
+R. Doan,RM,Meio,Japan,82,82,32500000,27,82,71,78,85,41,64
+K. Sano,CM,Meio,Japan,79,83,23000000,24,79,51,67,76,78,75
+A. Tanaka,CM,Meio,Japan,76,79,9000000,26,70,68,72,77,73,71
+K. Nakamura,LM,Meio,Japan,76,79,10000000,24,79,74,71,77,41,74
+T. Kubo,CAM,Meio,Japan,82,86,43500000,24,86,77,78,85,40,64
+J. Ito,CAM,Meio,Japan,77,77,8500000,32,86,69,72,78,58,70
+A. Ueda,ST,Ataque,Japan,74,75,5000000,26,74,75,58,69,28,69
+Abulaila,GK,Goleiro,Jordan,68,70,15210000,25,42,70,53,61,69,63
+Abu Dahab,CB,Defesa,Jordan,66,70,10890000,22,56,36,54,52,70,71
+Nasib,CB,Defesa,Jordan,66,66,10890000,27,56,36,54,52,70,71
+Y. Al Arab,CB,Defesa,Jordan,75,75,4700000,29,79,29,46,52,73,83
+Haddad,RM,Meio,Jordan,69,69,17640000,28,77,70,70,74,47,64
+Al-Rawahbdeh,CM,Meio,Jordan,67,71,12960000,22,65,59,70,68,65,66
+Al-Rashdan,CM,Meio,Jordan,70,72,20250000,25,68,62,73,71,68,69
+Abu Taha,LM,Meio,Jordan,69,69,17640000,28,77,70,70,74,47,64
+M. Al Tamari,RW,Ataque,Jordan,75,75,5500000,28,89,69,67,80,38,63
+Olwan,ST,Ataque,Jordan,67,71,12960000,23,71,70,64,68,42,69
+Al-Mardi,LW,Ataque,Jordan,69,69,17640000,29,77,70,70,74,47,64
+Johny Placide,GK,Goleiro,Haiti,69,69,150000,37,54,67,69,70,68,72
+Martin Experience,LB,Defesa,Haiti,62,65,475000,26,68,36,53,59,58,64
+Hannes Delcroix,CB,Defesa,Haiti,71,74,2200000,26,66,35,61,61,71,70
+Ricardo Ade,CB,Defesa,Haiti,72,72,625000,35,71,36,58,57,71,77
+Carlens Arcus,RB,Defesa,Haiti,71,71,1600000,29,75,44,66,66,66,75
+Ruben Providence,LM,Meio,Haiti,69,71,17640000,25,77,70,70,74,47,64
+Danley Jean Jacques,CM,Meio,Haiti,70,75,2300000,25,69,56,66,70,67,74
+Jean-Ricner Bellegarde,CM,Meio,Haiti,75,76,6500000,27,78,63,72,78,70,72
+Deedson Louicius,RM,Meio,Haiti,65,71,1100000,24,84,62,54,66,22,57
+Wilson Isidor,ST,Ataque,Haiti,72,77,3600000,24,81,71,60,70,31,72
+Frantzdy Pierrot,ST,Ataque,Haiti,72,72,2300000,30,65,72,56,62,32,82
+J. Pickford,GK,Goleiro,England,84,84,22500000,31,53,87,88,78,82,81
+R. James,RB,Defesa,England,81,84,31500000,25,76,71,82,77,81,81
+M. Guéhi,CB,Defesa,England,82,84,35000000,24,69,39,69,73,83,78
+E. Konsa,CB,Defesa,England,82,83,30500000,27,75,53,71,75,84,78
+O'Reilly,LB,Defesa,England,81,81,60840000,29,87,63,77,78,82,80
+E. Anderson,CDM,Meio,England,80,85,29500000,22,71,68,79,81,77,78
+D. Rice,CM,Meio,England,87,88,83500000,26,72,73,84,80,83,83
+B. Saka,RW,Ataque,England,88,90,118500000,23,84,82,85,88,60,73
+J. Bellingham,CAM,Meio,England,90,94,174500000,22,80,86,83,90,78,85
+E. Eze,LW,Ataque,England,83,84,42000000,27,74,80,81,87,50,68
+H. Kane,ST,Ataque,England,89,89,87000000,31,64,92,83,82,48,82
+Beyranvand,GK,Goleiro,IR Iran,73,75,29160000,24,42,75,58,66,74,68
+Yousefi,RB,Defesa,IR Iran,73,75,29160000,26,79,55,69,70,74,72
+Kanaani,CB,Defesa,IR Iran,75,77,36000000,25,65,45,63,61,79,80
+Khalilzadeh,CB,Defesa,IR Iran,75,79,36000000,23,65,45,63,61,79,80
+Mohammadi,LB,Defesa,IR Iran,72,72,26010000,27,78,54,68,69,73,71
+Ezatolahi,CDM,Meio,IR Iran,73,77,29160000,23,69,58,75,71,76,74
+Ghoddos,CM,Meio,IR Iran,76,80,39690000,22,74,68,79,77,74,75
+Jahanbakhsh,RW,Ataque,IR Iran,77,79,43560000,25,85,78,78,82,55,72
+Ghayedi,CAM,Meio,IR Iran,74,76,32490000,25,74,75,77,78,54,68
+Mohebi,LW,Ataque,IR Iran,76,78,39690000,26,84,77,77,81,54,71
+M. Taremi,ST,Ataque,IR Iran,78,78,11500000,32,74,78,74,78,38,68
+Hassan,GK,Goleiro,Iraq,71,71,23040000,28,42,73,56,64,72,66
+Hussein Ali,RB,Defesa,Iraq,71,71,23040000,27,77,53,67,68,72,70
+Sulaka,CB,Defesa,Iraq,69,73,17640000,23,59,39,57,55,73,74
+Tahseen,CB,Defesa,Iraq,72,76,26010000,22,62,42,60,58,76,77
+M. Doski,LB,Defesa,Iraq,68,71,1500000,25,75,54,65,71,62,62
+A. Al-Ammari,CDM,Meio,Iraq,65,65,750000,27,68,57,66,63,60,70
+I. Bayesh,CM,Meio,Iraq,68,71,1600000,25,79,67,60,69,58,75
+A. Jasim,RW,Ataque,Iraq,62,77,975000,21,67,62,57,63,22,59
+Z. Iqbal,CAM,Meio,Iraq,68,78,2600000,22,64,60,64,73,63,62
+Amyn,LW,Ataque,Iraq,71,71,23040000,27,79,72,72,76,49,66
+Aymen Hussein,ST,Ataque,Iraq,71,75,23040000,23,75,74,68,72,46,73
+Yassine Bounou,GK,Goleiro,Morocco,82,82,5000000,34,38,85,76,82,82,82
+Noussair Mazraoui,LB,Defesa,Morocco,80,81,22000000,27,75,66,76,80,77,72
+Chadi Riad,CB,Defesa,Morocco,72,81,4900000,22,60,32,57,61,71,72
+Issa Diop,CB,Defesa,Morocco,80,82,56250000,26,70,50,68,66,84,85
+Achraf Hakimi,RB,Defesa,Morocco,89,90,111000000,26,92,79,82,83,82,79
+Ayyoub Bouaddi,CDM,Meio,Morocco,78,82,47610000,23,74,63,80,76,81,79
+Neil El Aynaoui,CDM,Meio,Morocco,77,83,16500000,23,62,63,76,74,73,75
+Bilal El Khannouss,LW,Ataque,Morocco,76,84,17000000,21,76,64,76,82,38,56
+Brahim Diaz,CAM,Meio,Morocco,82,83,36500000,25,82,74,79,85,31,58
+Ismael Saibari,RW,Ataque,Morocco,82,82,65610000,28,90,83,83,87,60,77
+Azzedine Ounahi,ST,Ataque,Morocco,83,83,70560000,28,87,86,80,84,58,85
+Raul Rangel,GK,Goleiro,Mexico,72,76,0,25,32,78,74,71,74,75
+Jesus Gallardo,LB,Defesa,Mexico,75,75,0,30,83,67,70,75,69,75
+Johan Vasquez,CB,Defesa,Mexico,75,78,6500000,26,61,33,58,60,76,75
+Cesar Montes,CB,Defesa,Mexico,75,77,0,28,57,46,60,63,74,79
+Israel Reyes,RB,Defesa,Mexico,77,81,43560000,22,83,59,73,74,78,76
+Erik Lira,CDM,Meio,Mexico,73,80,0,25,74,58,68,68,69,74
+Bryan Gutierrez,CM,Meio,Mexico,74,74,32490000,27,72,66,77,75,72,73
+Alvaro Fidalgo,CM,Meio,Mexico,77,79,43560000,25,75,69,80,78,75,76
+Julian Quinones,LW,Ataque,Mexico,80,80,21500000,28,88,79,70,79,36,83
+Raul Jimenez,ST,Ataque,Mexico,77,77,5000000,34,57,79,74,75,46,79
+Roberto Alvarado,RW,Ataque,Mexico,78,78,0,26,81,71,78,76,53,69
+Ø. Nyland,GK,Goleiro,Norway,76,76,1300000,34,47,75,77,75,75,74
+J. Ryerson,RB,Defesa,Norway,79,80,18500000,27,74,63,71,76,77,82
+T. Heggem,CB,Defesa,Norway,73,76,3500000,26,73,46,61,66,73,79
+L. Østigård,CB,Defesa,Norway,73,80,5500000,25,60,37,50,61,71,79
+D. Wolfe,LB,Defesa,Norway,73,78,4300000,23,78,53,65,69,67,77
+K. Thorstvedt,CM,Meio,Norway,75,76,6500000,26,61,71,74,73,67,82
+P. Berg,CDM,Meio,Norway,77,80,12000000,27,73,67,75,73,71,78
+S. Berge,CM,Meio,Norway,79,80,18000000,27,55,65,74,71,75,84
+A. Sørloth,RW,Ataque,Norway,84,84,42000000,29,77,82,71,76,36,85
+E. Haaland,ST,Ataque,Norway,90,92,157000000,24,86,91,70,80,45,88
+A. Nusa,LW,Ataque,Norway,76,88,18000000,20,89,72,68,81,41,63
+M. Crocombe,GK,Goleiro,New Zealand,65,65,375000,31,47,65,62,65,64,64
+T. Payne,RB,Defesa,New Zealand,63,63,350000,31,68,56,57,55,59,79
+T. Bindon,CB,Defesa,New Zealand,69,82,3200000,20,58,46,59,64,68,73
+M. Boxall,CB,Defesa,New Zealand,70,70,275000,36,52,43,60,57,69,80
+L. Cacace,LB,Defesa,New Zealand,72,77,3300000,24,72,60,67,71,69,74
+M. Stamenić,CDM,Meio,New Zealand,71,79,3900000,23,67,60,68,71,66,75
+J. Bell,CM,Meio,New Zealand,74,77,5000000,26,70,64,72,71,69,81
+C. McCowatt,RW,Ataque,New Zealand,67,70,1300000,26,76,67,65,67,52,67
+Singh,CAM,Meio,New Zealand,69,73,17640000,23,69,70,72,73,49,63
+M. Garbett,LW,Ataque,New Zealand,65,71,1100000,23,68,61,62,65,52,65
+C. Wood,ST,Ataque,New Zealand,82,82,19500000,33,53,83,68,72,40,81
+B. Verbruggen,GK,Goleiro,Netherlands,78,84,18500000,22,56,81,76,76,78,75
+D. Dumfries,RB,Defesa,Netherlands,84,84,37000000,29,84,70,75,79,79,84
+V. van Dijk,CB,Defesa,Netherlands,90,90,57000000,33,73,60,72,72,90,87
+N. Aké,CB,Defesa,Netherlands,83,83,30000000,30,72,53,72,75,84,74
+M. van de Ven,LB,Defesa,Netherlands,82,85,37000000,24,90,49,64,72,82,80
+F. de Jong,CDM,Meio,Netherlands,87,87,79500000,28,82,71,85,87,78,77
+R. Gravenberch,CM,Meio,Netherlands,85,88,66500000,23,76,76,81,85,81,81
+D. Malen,RW,Ataque,Netherlands,79,80,20500000,26,86,78,72,82,35,67
+T. Reijnders,CAM,Meio,Netherlands,86,87,79500000,26,79,79,82,85,77,77
+C. Gakpo,LW,Ataque,Netherlands,84,85,49500000,26,83,82,80,83,47,74
+M. Depay,ST,Ataque,Netherlands,81,81,0,31,79,82,79,83,30,78
+O. Mosquera,GK,Goleiro,Panama,70,71,1200000,30,32,71,69,68,69,65
+Farina,CB,Defesa,Panama,68,72,15210000,23,58,38,56,54,72,73
+A. Andrade,CB,Defesa,Panama,69,73,1700000,26,74,51,60,64,68,79
+J. Córdoba,CB,Defesa,Panama,68,74,1700000,24,72,31,53,61,65,73
+A. Murillo,RM,Meio,Panama,76,76,6500000,29,84,57,70,71,70,76
+Carrasquilla,CM,Meio,Panama,72,74,26010000,26,70,64,75,73,70,71
+A. Godoy,CM,Meio,Panama,70,70,650000,35,43,56,65,67,64,75
+Davis,LM,Meio,Panama,68,68,15210000,29,76,69,69,73,46,63
+Barcenas,CAM,Meio,Panama,70,70,20250000,29,70,71,73,74,50,64
+Diaz,CAM,Meio,Panama,73,77,29160000,22,73,74,76,77,53,67
+J. Fajardo,ST,Ataque,Panama,68,68,1000000,31,69,68,58,68,33,68
+Orlando Gill,GK,Goleiro,Paraguay,65,70,825000,25,24,66,68,65,65,66
+Junior Alonso,LB,Defesa,Paraguay,75,77,36000000,25,81,57,71,72,76,74
+Omar Alderete,CB,Defesa,Paraguay,78,79,13500000,28,60,61,62,69,79,78
+Gustavo Gomez,CB,Defesa,Paraguay,74,76,32490000,25,64,44,62,60,78,79
+Juan Jose Caceres,RB,Defesa,Paraguay,76,76,39690000,27,82,58,72,73,77,75
+Diego Gomez,LM,Meio,Paraguay,73,80,6000000,22,69,67,71,75,72,75
+Andres Cubas,CM,Meio,Paraguay,74,74,3600000,29,69,47,66,71,73,56
+Damian Bobadilla,CM,Meio,Paraguay,76,78,39690000,26,74,68,79,77,74,75
+Miguel Almiron,RM,Meio,Paraguay,76,76,6000000,31,87,72,70,79,57,64
+Julio Enciso,ST,Ataque,Paraguay,73,84,7000000,21,74,72,70,78,33,51
+Antonio Sanabria,ST,Ataque,Paraguay,76,76,7500000,29,75,75,68,79,32,57
+Diogo Costa,GK,Goleiro,Portugal,84,89,49500000,25,35,86,82,78,82,83
+João Cancelo,RB,Defesa,Portugal,84,84,30500000,31,83,73,84,84,78,74
+Rúben Dias,CB,Defesa,Portugal,86,87,64500000,28,59,39,69,69,86,84
+Gonçalo Inácio,CB,Defesa,Portugal,81,86,35000000,23,77,37,71,73,82,81
+Nuno Mendes,LB,Defesa,Portugal,86,89,86000000,23,95,65,76,82,80,77
+João Neves,CM,Meio,Portugal,85,90,79500000,20,74,71,80,84,82,83
+Vitinha,CDM,Meio,Portugal,89,91,128500000,25,72,80,86,90,75,70
+Bruno Fernandes,CM,Meio,Portugal,87,87,77000000,30,67,83,89,83,65,75
+Bernardo Silva,RW,Ataque,Portugal,84,84,40500000,30,61,78,83,89,71,65
+Cristiano Ronaldo,ST,Ataque,Portugal,85,85,0,40,76,88,76,80,34,76
+João Félix,LW,Ataque,Portugal,79,82,23000000,25,77,78,77,82,45,66
+Mahmoud Abunada,GK,Goleiro,Qatar,68,68,15210000,29,42,70,53,61,69,63
+Homam Ahmed,LB,Defesa,Qatar,68,71,0,25,76,48,60,61,62,70
+Boualem Khoukhi,CB,Defesa,Qatar,71,71,0,34,60,60,57,54,71,76
+Pedro Miguel,CB,Defesa,Qatar,68,68,0,34,73,38,60,61,64,78
+Aloui,RB,Defesa,Qatar,68,72,1200000,23,73,46,61,64,65,68
+Julien Laye,CDM,Meio,Qatar,69,71,17640000,24,65,54,71,67,72,70
+Jassem Gaber,CDM,Meio,Qatar,63,74,0,23,64,44,53,54,62,72
+Akram Afif,LW,Ataque,Qatar,78,78,0,28,87,75,72,79,32,55
+Assim Madibo,CAM,Meio,Qatar,65,66,0,28,82,38,53,61,65,75
+Edmilson Junior,RW,Ataque,Qatar,76,76,0,30,88,75,70,79,44,65
+Yusuf Abdelrazzaq,ST,Ataque,Qatar,72,72,26010000,27,76,75,69,73,47,74
+Matej Kovar,GK,Goleiro,Czechia,75,80,6500000,25,30,75,78,75,75,77
+Stepan Chaloupek,CB,Defesa,Czechia,70,76,2300000,22,69,34,52,57,68,76
+Robin Hranac,CB,Defesa,Czechia,71,74,2200000,25,75,38,51,52,70,76
+Ladislav Krejci,CB,Defesa,Czechia,78,82,17500000,26,72,68,68,69,76,84
+Vladimir Coufal,RWB,Defesa,Czechia,73,73,2100000,32,58,56,70,70,74,71
+Tomas Soucek,CM,Meio,Czechia,78,78,12000000,30,45,72,71,68,78,82
+Matej Sojka,CM,Meio,Czechia,76,80,39690000,23,74,68,79,77,74,75
+Jaroslav Zeleny,LWB,Defesa,Czechia,72,72,1500000,32,74,62,69,70,71,75
+Lukas Provod,LW,Ataque,Czechia,78,78,14000000,28,76,75,78,78,64,82
+Patrik Schick,ST,Ataque,Czechia,85,85,54000000,29,72,83,71,81,38,77
+Pavel Sulc,RW,Ataque,Czechia,77,80,14500000,24,71,73,74,77,39,64
+L. Mpasi,GK,Goleiro,Congo DR,67,67,675000,30,45,65,66,66,66,66
+A. Wan-Bissaka,RB,Defesa,Congo DR,80,81,22000000,27,80,51,69,77,78,73
+C. Mbemba,CB,Defesa,Congo DR,75,75,4600000,30,67,56,65,67,75,73
+A. Tuanzebe,CB,Defesa,Congo DR,73,74,3200000,27,76,36,64,68,73,75
+A. Masuaku,LB,Defesa,Congo DR,75,75,4099999,31,79,62,74,78,68,79
+C. Pickel,CDM,Meio,Congo DR,71,71,1900000,28,63,63,68,69,67,80
+Moutoussamy,CM,Meio,Congo DR,75,75,36000000,28,73,67,78,76,73,74
+Bongonda,RW,Ataque,Congo DR,73,77,29160000,22,81,74,74,78,51,68
+Kakuta,CAM,Meio,Congo DR,74,78,32490000,23,74,75,77,78,54,68
+Y. Wissa,LW,Ataque,Congo DR,82,82,31000000,28,85,82,70,80,31,71
+C. Bakambu,ST,Ataque,Congo DR,77,77,5000000,34,78,78,68,72,40,68
+Angus Gunn,GK,Goleiro,Scotland,72,74,1900000,29,48,74,70,71,72,70
+Andrew Robertson,LB,Defesa,Scotland,82,82,22000000,31,74,61,80,77,79,75
+Grant Hanley,CB,Defesa,Scotland,70,70,750000,33,52,30,47,49,69,78
+Jack Hendry,CB,Defesa,Scotland,74,74,3500000,30,73,56,63,64,71,82
+Aaron Hickey,RB,Defesa,Scotland,74,79,6000000,23,71,54,70,73,74,64
+John McGinn,LM,Meio,Scotland,81,81,25000000,30,69,77,78,80,77,83
+Lewis Ferguson,CM,Meio,Scotland,78,81,18500000,25,72,78,74,78,72,75
+Scott McTominay,CM,Meio,Scotland,85,85,54000000,28,76,82,77,80,80,85
+Ben Doak,RM,Meio,Scotland,71,85,4400000,19,89,61,63,75,28,60
+Che Adams,ST,Ataque,Scotland,77,77,11000000,28,82,80,64,77,43,72
+Lawrence Shankland,ST,Ataque,Scotland,73,73,3000000,29,63,75,66,72,28,80
+É. Mendy,GK,Goleiro,Senegal,80,80,7000000,33,34,81,75,77,79,79
+Diatta,RB,Defesa,Senegal,76,76,39690000,29,82,58,72,73,77,75
+K. Koulibaly,CB,Defesa,Senegal,82,82,10000000,34,74,48,62,65,82,84
+M. Niakhaté,CB,Defesa,Senegal,77,77,9000000,29,68,48,63,64,77,80
+I. Jakobs,LB,Defesa,Senegal,75,78,7000000,25,90,60,65,74,70,68
+I. Gueye,CDM,Meio,Senegal,79,79,4900000,35,60,59,70,73,80,70
+P. Gueye,CM,Meio,Senegal,78,81,18000000,26,67,65,75,75,76,79
+I. Sarr,RW,Ataque,Senegal,79,79,18500000,27,91,78,76,78,28,69
+I. Ndiaye,CAM,Meio,Senegal,79,82,23000000,25,84,76,70,84,40,63
+S. Mané,LW,Ataque,Senegal,83,83,22500000,33,82,81,78,85,44,75
+N. Jackson,ST,Ataque,Senegal,80,84,30500000,24,82,77,69,79,40,77
+Unai Simón,GK,Goleiro,Spain,85,86,43000000,28,49,85,76,80,83,84
+Marcos Llorente,RB,Defesa,Spain,84,84,36500000,30,89,79,78,81,78,82
+Pau Cubarsí,CB,Defesa,Spain,82,88,40500000,18,70,42,66,77,84,76
+A. Laporte,CB,Defesa,Spain,82,82,21000000,31,51,50,74,70,83,77
+Marc Cucurella,LB,Defesa,Spain,84,85,45500000,26,75,64,79,80,82,79
+Pedri,CM,Meio,Spain,89,93,149500000,22,77,73,85,91,78,77
+Rodri,CDM,Meio,Spain,90,90,102000000,29,65,80,86,84,86,85
+Fabián Ruiz,CM,Meio,Spain,85,85,52500000,29,61,77,80,81,75,72
+Lamine Yamal,RW,Ataque,Spain,89,95,147000000,17,85,81,86,90,23,53
+Oyarzabal,ST,Ataque,Spain,82,82,31000000,28,77,83,81,82,42,65
+Nico Williams,LW,Ataque,Spain,86,89,94500000,22,93,76,80,87,36,66
+Matt Freese,GK,Goleiro,USA,69,73,1500000,26,29,71,68,68,70,69
+Antonee Robinson,LB,Defesa,USA,82,82,29500000,27,88,46,75,77,78,80
+Tim Ream,CB,Defesa,USA,72,72,425000,37,39,44,69,60,74,73
+Chris Richards,CB,Defesa,USA,77,80,12500000,25,66,27,58,62,78,77
+Alex Freeman,RB,Defesa,USA,65,79,1600000,20,82,57,62,67,58,73
+Tyler Adams,CDM,Meio,USA,79,81,19500000,26,79,56,71,75,79,75
+Malik Tillman,CDM,Meio,USA,82,87,46000000,23,84,76,77,83,65,77
+Christian Pulisic,LW,Ataque,USA,84,84,46000000,26,88,82,80,86,46,65
+Weston McKennie,CAM,Meio,USA,78,79,16500000,26,77,71,77,77,80,80
+Sergino Dest,RW,Ataque,USA,79,83,23500000,24,87,60,75,83,72,72
+Folarin Balogun,ST,Ataque,USA,77,82,16000000,23,84,77,62,77,23,68
+Ronwen Williams,GK,Goleiro,South Africa,72,74,26010000,25,42,74,57,65,73,67
+Aubrey Modiba,LB,Defesa,South Africa,68,70,15210000,26,74,50,64,65,69,67
+Mbekezeli Mbokazi,CB,Defesa,South Africa,72,72,26010000,27,62,42,60,58,76,77
+Nkosinathi Sibisi,CB,Defesa,South Africa,69,71,17640000,25,59,39,57,55,73,74
+Ime Okon,CB,Defesa,South Africa,67,74,1900000,21,77,30,44,59,68,70
+Khuliso Mudau,RB,Defesa,South Africa,72,74,26010000,25,78,54,68,69,73,71
+Teboho Mokoena,CM,Meio,South Africa,73,75,29160000,25,71,65,76,74,71,72
+Sphephelo Sithole,CM,Meio,South Africa,65,69,900000,26,64,53,59,61,64,74
+Jayden Adams,CM,Meio,South Africa,69,73,17640000,23,67,61,72,70,67,68
+Iqraam Rayners,ST,Ataque,South Africa,74,74,32490000,29,78,77,71,75,49,76
+Lyle Foster,ST,Ataque,South Africa,72,77,3600000,24,81,72,61,69,36,73
+K. Nordfeldt,GK,Goleiro,Sweden,72,72,250000,36,50,70,72,69,70,71
+C. Starfelt,CB,Defesa,Sweden,78,78,11500000,30,74,31,56,68,78,78
+G. Lagerbielke,CB,Defesa,Sweden,71,75,2300000,25,50,32,57,58,70,75
+V. Lindelöf,CB,Defesa,Sweden,75,75,4600000,30,50,51,71,67,76,69
+D. Svensson,RM,Meio,Sweden,77,82,15000000,23,77,56,75,76,73,74
+J. Karlström,CM,Meio,Sweden,75,75,4700000,30,64,57,72,71,71,78
+Y. Ayari,CM,Meio,Sweden,75,82,11500000,21,69,70,73,77,69,62
+G. Gudmundsson,LM,Meio,Sweden,77,78,11500000,26,87,64,71,75,70,75
+B. Nygren,CAM,Meio,Sweden,73,79,4800000,23,71,74,74,72,62,72
+A. Elanga,CAM,Meio,Sweden,81,84,35000000,23,92,72,76,82,39,70
+V. Gyökeres,ST,Ataque,Sweden,87,88,93000000,27,90,86,73,81,36,91
+Gregor Kobel,GK,Goleiro,Switzerland,86,89,66500000,27,44,87,64,83,86,86
+Ricardo Rodriguez,CB,Defesa,Switzerland,74,74,2900000,32,66,69,78,74,70,72
+Manuel Akanji,CB,Defesa,Switzerland,82,82,25500000,29,74,48,69,73,82,81
+Nico Elvedi,CB,Defesa,Switzerland,77,77,9000000,28,70,39,63,65,78,76
+Michel Aebischer,RWB,Defesa,Switzerland,77,81,43560000,22,83,59,73,74,78,76
+Remo Freuler,CM,Meio,Switzerland,81,81,13000000,33,58,72,76,77,77,74
+Granit Xhaka,CM,Meio,Switzerland,85,85,36000000,32,47,75,85,74,78,82
+Denis Zakaria,LWB,Defesa,Switzerland,77,77,43560000,28,83,59,73,74,78,76
+Dan Ndoye,RW,Ataque,Switzerland,79,82,24000000,24,89,72,70,81,62,68
+Breel Embolo,ST,Ataque,Switzerland,77,77,11000000,28,78,75,70,75,51,80
+Ruben Vargas,LW,Ataque,Switzerland,75,75,6000000,26,84,70,69,78,54,64
+Dahmen,GK,Goleiro,Tunisia,72,72,26010000,27,42,74,57,65,73,67
+Y. Valery,RB,Defesa,Tunisia,71,74,2300000,26,62,52,63,68,70,74
+D. Bronn,CB,Defesa,Tunisia,68,68,1000000,30,60,61,64,61,68,76
+M. Talbi,CB,Defesa,Tunisia,73,76,3500000,27,56,30,42,57,73,76
+A. Abdi,LB,Defesa,Tunisia,76,76,5500000,31,86,62,70,73,69,75
+I. Gharbi,CM,Meio,Tunisia,73,82,7000000,21,78,67,69,79,41,56
+E. Skhiri,CDM,Meio,Tunisia,80,80,17500000,30,64,73,74,75,80,74
+Hannibal,CM,Meio,Tunisia,74,82,9500000,22,76,63,73,76,68,82
+E. Achouri,RW,Ataque,Tunisia,72,73,2800000,26,85,64,65,74,32,58
+Mastouri,ST,Ataque,Tunisia,76,78,39690000,26,80,79,73,77,51,78
+S. Tounekti,LW,Ataque,Tunisia,69,76,2800000,22,78,62,62,70,24,63
+Ugurcan Cakir,GK,Goleiro,Türkiye,80,82,17500000,29,54,79,74,76,79,80
+Ferdi Kadioglu,LB,Defesa,Türkiye,79,81,20000000,25,82,68,74,80,76,67
+Abdulkerim Bardakci,CB,Defesa,Türkiye,80,80,17500000,30,59,46,70,69,81,85
+Merih Demiral,CB,Defesa,Türkiye,78,81,16000000,27,73,39,49,61,79,81
+Zeki Celik,RB,Defesa,Türkiye,76,76,7000000,28,72,59,69,73,73,74
+Ismail Yuksek,CDM,Meio,Türkiye,77,79,11500000,26,74,59,70,73,74,78
+Hakan Calhanoglu,CDM,Meio,Türkiye,86,86,47500000,31,71,81,87,82,81,73
+Kenan Yildiz,LW,Ataque,Türkiye,79,89,38500000,20,84,78,74,83,35,66
+Orkun Kokcu,CAM,Meio,Türkiye,82,86,43500000,24,72,80,84,80,70,79
+Arda Guler,RW,Ataque,Türkiye,81,89,56500000,20,70,77,83,83,52,50
+Kerem Akturkoglu,ST,Ataque,Türkiye,80,81,25000000,26,85,75,74,81,41,58
+Sergio Rochet,GK,Goleiro,Uruguay,80,80,56250000,28,42,82,65,73,81,75
+Guillermo Varela,RB,Defesa,Uruguay,81,83,60840000,25,87,63,77,78,82,80
+J. Giménez,CB,Defesa,Uruguay,83,83,30000000,30,73,46,60,62,85,82
+R. Araujo,CB,Defesa,Uruguay,83,86,42000000,26,80,53,63,61,81,83
+M. Olivera,LB,Defesa,Uruguay,78,78,13500000,27,70,51,69,72,77,73
+F. Valverde,CM,Meio,Uruguay,89,90,120500000,26,88,84,84,84,83,85
+M. Ugarte,CDM,Meio,Uruguay,79,83,23000000,24,62,65,72,76,77,75
+R. Bentancur,CM,Meio,Uruguay,80,81,20500000,28,64,68,78,79,78,72
+Agustin Canobbio,RW,Ataque,Uruguay,84,88,75690000,22,92,85,85,89,62,79
+D. Núñez,ST,Ataque,Uruguay,79,82,23000000,26,88,79,72,76,49,82
+Brian Rodriguez,LW,Ataque,Uruguay,83,83,70560000,29,91,84,84,88,61,78
+Nematov,GK,Goleiro,Uzbekistan,70,72,20250000,24,42,72,55,63,71,65
+Abdullaev,CB,Defesa,Uzbekistan,72,76,26010000,22,62,42,60,58,76,77
+Ashurmatov,CB,Defesa,Uzbekistan,71,73,23040000,24,61,41,59,57,75,76
+A. Khusanov,CB,Defesa,Uzbekistan,77,85,22000000,21,85,39,59,64,77,76
+Sayfiev,RM,Meio,Uzbekistan,72,72,26010000,29,80,73,73,77,50,67
+Shukurov,CM,Meio,Uzbekistan,71,71,23040000,29,69,63,74,72,69,70
+Khamrobekov,CM,Meio,Uzbekistan,70,74,20250000,23,68,62,73,71,68,69
+Nasrullaev,LM,Meio,Uzbekistan,68,68,15210000,27,76,69,69,73,46,63
+Ganiev,CAM,Meio,Uzbekistan,73,75,29160000,24,73,74,76,77,53,67
+Urunov,CAM,Meio,Uzbekistan,71,71,23040000,29,71,72,74,75,51,65
+E. Shomurodov,ST,Ataque,Uzbekistan,74,74,4099999,30,79,71,64,75,40,66
